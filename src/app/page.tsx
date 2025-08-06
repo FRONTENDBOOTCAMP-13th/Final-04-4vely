@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import CommunityPop from '@/components/_home/CommunityPop';
 import GreenMagazineSection from '@/components/_home/green-magazine/GreenMagazineSection';
 import HomeHero from '@/components/_home/HomeHero';

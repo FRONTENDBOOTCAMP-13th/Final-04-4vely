@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { WeatherInfo } from '@/lib/functions/weather/fetchWeather';
 import { mapWeatherToTips } from '@/lib/functions/weather/mapWeatherToTips';
 import { weatherImage } from '@/lib/utils/weaterImage';
+import { LucideMapPinOff } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
@@ -16,22 +17,11 @@ interface WeatherTipData {
   plants: string[];
 }
 
-// 모바일만 true로 판별
-const isMobileDevice = (): boolean => {
-  if (typeof window === 'undefined') return false;
-  return /iPhone|Android.*Mobile/.test(navigator.userAgent);
-};
-
 export default function WeatherWidget() {
   const [tipsData, setTipsData] = useState<WeatherTipData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [requested, setRequested] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    setIsMobile(isMobileDevice());
-  }, []);
+  const [locationDenied, setLocationDenied] = useState(false);
 
   // 날씨 정보 요청
   const fetchWeatherByLocation = useCallback(async (lat: number, lon: number) => {
@@ -50,7 +40,6 @@ export default function WeatherWidget() {
 
   // 위치 요청
   const requestWeather = useCallback(() => {
-    setRequested(true);
     setLoading(true);
 
     navigator.geolocation.getCurrentPosition(
@@ -60,28 +49,24 @@ export default function WeatherWidget() {
         await fetchWeatherByLocation(lat, lon);
       },
       async () => {
+        setLocationDenied(true); // 위치 권한 거부됨
         // 기본 좌표: 서울
         await fetchWeatherByLocation(37.5665, 126.978);
       },
     );
   }, [fetchWeatherByLocation]);
-  // PC/태블릿인 경우 자동 위치 요청
+  // 컴포넌트 마운트 시 자동 요청
   useEffect(() => {
-    if (!isMobile) {
-      requestWeather();
-    }
-  }, [isMobile, requestWeather]);
+    requestWeather();
+  }, [requestWeather]);
 
   return (
     <section className='relative mx-auto my-14 flex w-full flex-col px-5 sm:max-w-[40rem] md:max-w-none lg:max-w-[70rem]' aria-label='현재 날씨 정보'>
-      {/* 모바일에서만 위치 요청 버튼 노출 */}
-      {isMobile && !requested && (
-        <div className='mb-4 flex flex-col items-center gap-2 md:flex-row md:justify-center'>
-          <Button onClick={requestWeather} variant='default' size='lg' className='flex items-center gap-2 px-6 py-3'>
-            <FiMapPin className='h-5 w-5' />
-            현재 위치 기반 추천 보기
-          </Button>
-          <p className='text-sm text-gray-500'>위치 허용 시 날씨 기반 식물 팁을 받아보실 수 있어요</p>
+      {/* 위치 권한 거부 안내 */}
+      {locationDenied && (
+        <div className='mb-3 flex items-center justify-center gap-2 text-center text-gray-700'>
+          <LucideMapPinOff className='h-4 w-4 lg:h-5 lg:w-5' />
+          <p className='text-sm italic lg:text-base'>위치 권한이 거부되어 서울의 날씨를 보여드려요.</p>
         </div>
       )}
 

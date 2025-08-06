@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/Avatar';
 import { Button } from '@/components/ui/Button';
 
 import UpdateButton from '@/app/community/[id]/_components/UpdateButton';
+import { formatDate } from '@/app/my-page/my-plants/_utils/diaryUtils';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/AlertDialog';
 import BookmarkButton from '@/components/ui/BookmarkButton';
 import { createComment, deleteComment, fetchComments, updateComment } from '@/lib/functions/communityFunctions';
@@ -89,7 +90,7 @@ export default function ClientDetail({ post }: { post: Post }) {
             </div>
 
             <div className='flex flex-col items-end space-y-2 text-sm'>
-              <span>{new Date(createdAt).toLocaleDateString('ko-KR')}</span>
+              <span>{formatDate(createdAt)}</span>
               <div className='flex items-center gap-2'>
                 <UpdateButton postId={id} />
                 <DeleteButton postId={id} />

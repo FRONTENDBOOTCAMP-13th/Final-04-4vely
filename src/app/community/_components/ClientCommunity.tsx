@@ -2,6 +2,7 @@
 
 import Error from '@/app/error';
 import Loading from '@/app/loading';
+import { formatDate } from '@/app/my-page/my-plants/_utils/diaryUtils';
 import BookmarkButton from '@/components/ui/BookmarkButton';
 import { Button } from '@/components/ui/Button';
 import { Card, CardAvatar, CardContent, CardDescription, CardFooter, CardImage, CardTitle } from '@/components/ui/Card';
@@ -151,7 +152,7 @@ export default function ClientCommunity({ initialPosts, initialPagination }: Pro
                       {/* 아바타+푸터: 항상 하단 고정 */}
                       <div className='mt-auto' onClick={(e) => e.stopPropagation()}>
                         <CardAvatar src={post.author.avatar} fallback={post.author.username.charAt(0)} username={post.author.username} />
-                        <CardFooter likes={post.stats.bookmarks} comments={post.repliesCount ?? 0} views={post.stats.views} timeAgo={new Date(post.createdAt).toLocaleDateString('ko-KR')} onLike={() => {}} />
+                        <CardFooter likes={post.stats.bookmarks} comments={post.repliesCount ?? 0} views={post.stats.views} timeAgo={formatDate(post.createdAt)} onLike={() => {}} />
                       </div>
                     </CardContent>
                   </Card>

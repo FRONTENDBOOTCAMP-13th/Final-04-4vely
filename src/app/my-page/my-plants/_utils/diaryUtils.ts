@@ -72,7 +72,8 @@ export const truncateContent = (content: string, maxLength: number = 100): strin
  * 날짜 포맷팅 함수
  */
 export const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
+  const fixed = dateString.replace(/\./g, '-').replace(' ', 'T');
+  const date = new Date(fixed);
   return date.toLocaleDateString('ko-KR', {
     year: 'numeric',
     month: 'long',
@@ -84,7 +85,8 @@ export const formatDate = (dateString: string): string => {
  * 상대적 시간 표시 함수
  */
 export const getRelativeTime = (dateString: string): string => {
-  const date = new Date(dateString);
+  const safeString = dateString.replace(/\./g, '-').replace(' ', 'T');
+  const date = new Date(safeString);
   const now = new Date();
   const diff = now.getTime() - date.getTime();
 
