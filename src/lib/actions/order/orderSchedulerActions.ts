@@ -102,13 +102,8 @@ export async function registerShippingStatusScheduler(orderId: number): Promise<
     const schedulerData = {
       name: `배송중 상태 변경 - 주문 #${orderId}`,
       description: `주문 #${orderId}를 배송중 상태(OS035)로 변경`,
-      endpoint: `${APP_BASE_URL}/api/orders/${orderId}`,
+      endpoint: `${APP_BASE_URL}/api/orders/${orderId}?action=shipping&status=OS035`,
       time: schedulerTime,
-      extra: {
-        orderId,
-        status: 'OS035',
-        action: 'shipping',
-      },
     };
 
     const response = await fetch(`${API_URL}/scheduler`, {
@@ -121,7 +116,7 @@ export async function registerShippingStatusScheduler(orderId: number): Promise<
     });
 
     if (!response.ok) {
-      console.error('배송중 상태 스케줄러 등록 실패:', response.statusText);
+      console.error('배송중 상태 스케줄러 등록 실패:', response);
       return false;
     }
 
@@ -149,13 +144,8 @@ export async function registerDeliveryCompleteScheduler(orderId: number): Promis
     const schedulerData = {
       name: `배송 완료 상태 변경 - 주문 #${orderId}`,
       description: `주문 #${orderId}를 배송 완료 상태(OS040)로 변경`,
-      endpoint: `${APP_BASE_URL}/api/orders/${orderId}`,
+      endpoint: `${APP_BASE_URL}/api/orders/${orderId}?action=delivered&status=OS040`,
       time: schedulerTime,
-      extra: {
-        orderId,
-        status: 'OS040',
-        action: 'delivered',
-      },
     };
 
     const response = await fetch(`${API_URL}/scheduler`, {
@@ -168,7 +158,7 @@ export async function registerDeliveryCompleteScheduler(orderId: number): Promis
     });
 
     if (!response.ok) {
-      console.error('배송 완료 상태 스케줄러 등록 실패:', response.statusText);
+      console.error('배송 완료 상태 스케줄러 등록 실패:', response);
       return false;
     }
 
