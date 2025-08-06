@@ -1,4 +1,5 @@
 'use client';
+
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/AlertDialog';
 import { Button } from '@/components/ui/Button';
 import { createPost, uploadFile } from '@/lib/functions/communityFunctions';
@@ -6,7 +7,7 @@ import { useAuth } from '@/store/authStore';
 import { Plus, X } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 
 interface PostForm {
   id: string;
@@ -23,13 +24,18 @@ export default function ClientWrite() {
   const { zustandUser, session } = useAuth();
   const token = zustandUser?.token?.accessToken || session?.accessToken;
 
+  // cover 파일 + preview URL
   const [cover, setCover] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+
   const [postForms, setPostForms] = useState<PostForm[]>([{ id: '1', title: '', content: '', postImage: null, thumbnailImage: null }]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [name, setName] = useState('');
   const [nickname, setNickname] = useState('');
   const [species, setSpecies] = useState('');
   const [nameError, setNameError] = useState(false);
+
   const [dialog, setDialog] = useState<{
     open: boolean;
     title: string;
@@ -37,10 +43,26 @@ export default function ClientWrite() {
     onConfirm: () => void;
   }>({ open: false, title: '', description: '', onConfirm: () => {} });
 
+  // cover input change → Blob URL 생성/해제
   const handleCoverChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
     setCover(file);
+
+    if (coverPreview) {
+      URL.revokeObjectURL(coverPreview);
+      setCoverPreview(null);
+    }
+    if (file) {
+      setCoverPreview(URL.createObjectURL(file));
+    }
   };
+
+  // 언마운트 시 preview URL 해제
+  useEffect(() => {
+    return () => {
+      if (coverPreview) URL.revokeObjectURL(coverPreview);
+    };
+  }, [coverPreview]);
 
   const updatePostForm = (formId: string, field: keyof PostForm, value: string | File | null) => {
     setPostForms((prev) => prev.map((f) => (f.id === formId ? { ...f, [field]: value } : f)));
@@ -57,7 +79,6 @@ export default function ClientWrite() {
   };
 
   const handleSubmit = async () => {
-    // 이미지 최소 1개 업로드 체크 (커버 또는 본문 이미지)
     const hasBodyImage = postForms.some((f) => f.postImage);
     if (!cover && !hasBodyImage) {
       setDialog({
@@ -67,7 +88,6 @@ export default function ClientWrite() {
       });
       return;
     }
-
     const first = postForms[0];
     if (!first.title.trim()) {
       setDialog({
@@ -83,7 +103,7 @@ export default function ClientWrite() {
       // 1) 커버 업로드
       const coverUrl = cover ? await uploadFile(cover) : '';
 
-      // 2) 이미지 업로드
+      // 2) 본문 이미지 업로드
       const contentsPayload = await Promise.all(
         postForms.map(async (f) => {
           const postImageUrl = f.postImage ? await uploadFile(f.postImage) : '';
@@ -141,8 +161,8 @@ export default function ClientWrite() {
         <section className='w-full text-gray-500'>
           <label htmlFor='cover-upload' className='block w-full cursor-pointer'>
             <div className='relative flex h-64 w-full items-center justify-center overflow-hidden border border-dashed border-gray-300 bg-white'>
-              {cover ? (
-                <Image src={URL.createObjectURL(cover)} alt='cover' fill className='object-cover' priority />
+              {coverPreview ? (
+                <Image src={coverPreview} alt='cover preview' fill unoptimized className='object-cover' />
               ) : (
                 <div className='flex flex-col items-center gap-1'>
                   <h2 className='text-2xl font-semibold'>대문 이미지 추가</h2>
@@ -157,8 +177,8 @@ export default function ClientWrite() {
         {/* 제목 */}
         <h1 className='w-full max-w-4xl px-4 text-3xl font-bold'>글쓰기</h1>
 
-        {/* 정보 입력 한 줄 */}
-        <section className='mb-8 w-full max-w-4xl overflow-hidden rounded-3xl bg-teal-50 p-6'>
+        {/* 정보 입력 */}
+        <section className='mb-8 w-full max-w-4xl rounded-3xl bg-teal-50 p-6'>
           <h3 className='mb-4 text-lg font-semibold'>정보</h3>
           <div className='grid grid-cols-1 gap-4 sm:grid-cols-3'>
             {/* 식물이름 (필수) */}
@@ -218,14 +238,15 @@ export default function ClientWrite() {
           </div>
         </section>
 
+        {/* 본문 섹션 */}
         <div className='flex w-full max-w-4xl flex-col gap-6 px-4 md:flex-row'>
-          {/* 썸네일 섹션 */}
+          {/* 썸네일 사이드 */}
           <div className='hidden flex-col items-end gap-4 md:flex'>
             {postForms.map((form) => (
               <div key={form.id}>
                 {form.thumbnailImage ? (
                   <div className='relative h-20 w-20 overflow-hidden rounded-lg border border-gray-300'>
-                    <Image fill src={URL.createObjectURL(form.thumbnailImage)} alt='thumb' className='object-cover' priority />
+                    <Image src={URL.createObjectURL(form.thumbnailImage)} alt='thumbnail' fill unoptimized className='object-cover' />
                   </div>
                 ) : (
                   <div className='flex h-20 w-20 items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-400'>
@@ -236,7 +257,7 @@ export default function ClientWrite() {
             ))}
           </div>
 
-          {/* 글쓰기 폼 영역 */}
+          {/* 글쓰기 폼 */}
           <div className='flex-1 space-y-6 bg-teal-50'>
             {postForms.map((form, idx) => (
               <section key={form.id} className='rounded-lg border p-4 transition hover:shadow-md'>
@@ -288,7 +309,7 @@ export default function ClientWrite() {
                     />
                     {form.postImage && (
                       <>
-                        <Image fill src={URL.createObjectURL(form.postImage)} alt='post' className='object-cover' />
+                        <Image src={URL.createObjectURL(form.postImage)} alt='post image' fill unoptimized className='object-cover' />
                         <button
                           type='button'
                           onClick={() => {
@@ -298,14 +319,12 @@ export default function ClientWrite() {
                           className='absolute top-2 right-2 text-gray-400 transition hover:text-gray-600'
                           disabled={isSubmitting}
                         >
-                          {' '}
-                          <X size={20} />{' '}
+                          <X size={20} />
                         </button>
                       </>
                     )}
                   </div>
 
-                  {/* 내용 입력 */}
                   <textarea
                     placeholder='내용을 입력해주세요.'
                     value={form.content}
@@ -340,7 +359,7 @@ export default function ClientWrite() {
         </div>
       </main>
 
-      {/* 다이어로그 */}
+      {/* 다이얼로그 */}
       <AlertDialog open={dialog.open} onOpenChange={(open) => setDialog((d) => ({ ...d, open }))}>
         <AlertDialogContent className='fixed w-[90%] max-w-md -translate-x-1/2'>
           <AlertDialogHeader>

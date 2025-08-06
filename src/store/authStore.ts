@@ -115,7 +115,7 @@ let refreshPromise: Promise<boolean> | null = null;
 let isLoggingOut = false;
 
 /**
- * 세션 시간 검증 함수 (2시간)
+ * 세션 시간 검증 함수 (4시간)
  * 여러 곳에서 사용되는 세션 만료 검증 로직을 통합
  */
 const isSessionExpired = (sessionStartTime: number | null, lastActivityTime: number | null, rememberLogin: boolean): boolean => {
@@ -128,11 +128,11 @@ const isSessionExpired = (sessionStartTime: number | null, lastActivityTime: num
   }
 
   const now = Date.now();
-  const twoHours = 2 * 60 * 60 * 1000;
+  const fourHours = 4 * 60 * 60 * 1000;
 
-  // 세션 시작 후 2시간 또는 마지막 활동 후 2시간 경과 시 만료
-  const sessionExpired = now - sessionStartTime > twoHours;
-  const activityExpired = lastActivityTime ? now - lastActivityTime > twoHours : false;
+  // 세션 시작 후 4시간 또는 마지막 활동 후 4시간 경과 시 만료
+  const sessionExpired = now - sessionStartTime > fourHours;
+  const activityExpired = lastActivityTime ? now - lastActivityTime > fourHours : false;
 
   return sessionExpired || activityExpired;
 };
@@ -343,7 +343,7 @@ const useUserStore = create(
         if (state?.user) {
           // 통합된 세션 검증 함수 사용
           if (isSessionExpired(state.sessionStartTime, state.lastActivityTime, state.rememberLogin)) {
-            console.log('[세션 만료] 2시간 경과로 자동 로그아웃');
+            console.log('[세션 만료] 4시간 경과로 자동 로그아웃');
             state.logout();
             return;
           }
@@ -440,12 +440,13 @@ const performTokenRefresh = async (): Promise<boolean> => {
     } else {
       console.error('[토큰 갱신] 실패:', refreshResult.message);
 
-      // 리프레시 토큰도 만료된 경우 또는 인증 오류 시 로그아웃 처리
-      if (refreshResult.message?.includes('토큰') || refreshResult.message?.includes('인증')) {
-        console.log('[토큰 갱신] 인증 실패로 로그아웃 처리');
+      // 명확한 인증 오류(refresh token 만료, 인증 실패 등)인 경우에만 로그아웃
+      if (refreshResult.message?.includes('리프레시 토큰') || refreshResult.message?.includes('만료') || refreshResult.message?.includes('인증') || refreshResult.message?.includes('토큰이 없습니다')) {
+        console.log('[토큰 갱신] 인증 실패로 로그아웃 처리:', refreshResult.message);
         useUserStore.getState().logout();
       } else {
-        // 네트워크 오류 등의 경우 상태 유지하고 로딩만 해제
+        // 서버 오류, 네트워크 오류 등의 경우 상태 유지하고 로딩만 해제
+        console.log('[토큰 갱신] 일시적 오류로 상태 유지:', refreshResult.message);
         useUserStore.setState({ isLoading: false });
       }
 
@@ -498,10 +499,13 @@ export const startTokenRefreshInterval = () => {
           refreshUserToken().catch((error) => {
             console.warn('[자동 토큰 갱신] 실패:', error);
 
-            // 세션 만료 또는 인증 오류인 경우 로그아웃 처리
-            if (error?.message?.includes('refresh') || error?.status === 401 || error?.status === 403) {
-              console.log('[자동 토큰 갱신] 세션 만료로 자동 로그아웃');
+            // 명확한 인증 오류(401, 403)이거나 refresh token 관련 오류인 경우에만 로그아웃
+            // 네트워크 오류나 일시적 오류는 로그아웃하지 않음
+            if (error?.status === 401 || error?.status === 403 || (error?.message && (error.message.includes('리프레시 토큰') || error.message.includes('인증')))) {
+              console.log('[자동 토큰 갱신] 인증 오류로 자동 로그아웃:', error?.message || error?.status);
               useUserStore.getState().logout();
+            } else {
+              console.log('[자동 토큰 갱신] 일시적 오류로 다음 시도까지 대기:', error?.message);
             }
           });
         }

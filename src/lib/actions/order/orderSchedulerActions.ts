@@ -46,43 +46,21 @@ async function getSellerToken(): Promise<string | null> {
 }
 
 /**
- * 주문 시간에 따라 배송중 상태로 변경할 시간 계산 (테스트용: 30초 후)
- * @param {Date} orderTime - 주문 시간
- * @returns {Date} 배송중 상태로 변경할 시간
+ * 한국 시간으로 변환하여 스케줄러 API 형식으로 포맷 (YYYY.MM.DD HH:mm:ss)
+ * @param {Date} date - 변환할 날짜 (UTC 기준)
+ * @returns {string} 한국 시간으로 형식화된 시간 문자열
  */
-function calculateShippingTime(orderTime: Date): Date {
-  const shippingTime = new Date(orderTime);
+function formatKoreanSchedulerTime(date: Date): string {
+  // UTC 시간에 9시간을 더해서 한국 시간으로 변환
+  const koreaTime = new Date(date.getTime() + 9 * 60 * 60 * 1000);
 
-  // 테스트용: 주문 후 30초 뒤에 배송중으로 변경
-  shippingTime.setTime(shippingTime.getTime() + 30 * 1000);
-
-  return shippingTime;
-}
-
-/**
- * 배송 완료 시간 계산 (테스트용: 배송중 상태 후 30초)
- * @param {Date} shippingTime - 배송중 상태 시간
- * @returns {Date} 배송 완료 시간
- */
-function calculateDeliveryCompleteTime(shippingTime: Date): Date {
-  const completeTime = new Date(shippingTime);
-  // 테스트용: 배송중 상태 후 30초 뒤에 배송 완료로 변경
-  completeTime.setTime(completeTime.getTime() + 30 * 1000);
-  return completeTime;
-}
-
-/**
- * 날짜를 스케줄러 API 형식으로 변환 (YYYY.MM.DD HH:mm:ss)
- * @param {Date} date - 변환할 날짜
- * @returns {string} 형식화된 시간 문자열
- */
-function formatSchedulerTime(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
+  // 한국 시간을 "YYYY.MM.DD HH:mm:ss" 형식으로 생성
+  const year = koreaTime.getUTCFullYear();
+  const month = String(koreaTime.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(koreaTime.getUTCDate()).padStart(2, '0');
+  const hours = String(koreaTime.getUTCHours()).padStart(2, '0');
+  const minutes = String(koreaTime.getUTCMinutes()).padStart(2, '0');
+  const seconds = String(koreaTime.getUTCSeconds()).padStart(2, '0');
 
   return `${year}.${month}.${day} ${hours}:${minutes}:${seconds}`;
 }
@@ -94,9 +72,13 @@ function formatSchedulerTime(date: Date): string {
  */
 export async function registerShippingStatusScheduler(orderId: number): Promise<boolean> {
   try {
-    const orderTime = new Date();
-    const shippingTime = calculateShippingTime(orderTime);
-    const schedulerTime = formatSchedulerTime(shippingTime);
+    // 현재 시간에서 1일 후 한국 시간으로 생성
+    const now = new Date();
+    now.setDate(now.getDate() + 1); // 1일 후
+    const schedulerTime = formatKoreanSchedulerTime(now);
+
+    console.log('현재 UTC 시간:', new Date().toISOString());
+    console.log('생성된 한국 시간 (배송중):', schedulerTime);
 
     // 외부 스케줄러에 배송중 상태 변경 등록
     const schedulerData = {
@@ -135,10 +117,13 @@ export async function registerShippingStatusScheduler(orderId: number): Promise<
  */
 export async function registerDeliveryCompleteScheduler(orderId: number): Promise<boolean> {
   try {
-    const orderTime = new Date();
-    const shippingTime = calculateShippingTime(orderTime);
-    const completeTime = calculateDeliveryCompleteTime(shippingTime);
-    const schedulerTime = formatSchedulerTime(completeTime);
+    // 현재 시간에서 2일 후 한국 시간으로 생성
+    const now = new Date();
+    now.setDate(now.getDate() + 2); // 2일 후
+    const schedulerTime = formatKoreanSchedulerTime(now);
+
+    console.log('현재 UTC 시간:', new Date().toISOString());
+    console.log('생성된 한국 시간 (배송완료):', schedulerTime);
 
     // 외부 스케줄러에 배송 완료 상태 변경 등록
     const schedulerData = {
@@ -194,13 +179,6 @@ export async function updateOrderStatusAction(orderId: number, status: string, a
     } else {
       console.error('판매자 토큰 획득 실패 - 인증 없이 요청 시도');
     }
-
-    // 주문 상태 업데이트 (스케줄러에서 자동 실행)
-    console.log('📤 API 요청 보내는 중:', {
-      url: `${API_URL}/seller/orders/${orderId}`,
-      headers,
-      body: { state: status },
-    });
 
     const response = await fetch(`${API_URL}/seller/orders/${orderId}`, {
       method: 'PATCH',

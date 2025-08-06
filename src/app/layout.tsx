@@ -1,7 +1,4 @@
-import Notice from '@/app/notice';
-import ActivityTracker from '@/components/layout/ActivityTracker';
-import Footer from '@/components/layout/Footer';
-import Header from '@/components/layout/Header';
+import ConditionalLayout from '@/components/layout/ConditionalLayout';
 import '@/styles/globals.css';
 import { SessionProvider } from 'next-auth/react';
 import localFont from 'next/font/local';
@@ -31,9 +28,6 @@ export default function RootLayout({
     <SessionProvider>
       <html lang='ko' className={pretendard.variable}>
         <body className={`${pretendard.className} bg-surface`}>
-          <Notice />
-          <Header />
-          <ActivityTracker />
           <main>
             <Toaster
               position='top-center'
@@ -47,9 +41,8 @@ export default function RootLayout({
                 },
               }}
             />
-            {children}
+            <ConditionalLayout>{children}</ConditionalLayout>
           </main>
-          <Footer />
         </body>
       </html>
     </SessionProvider>

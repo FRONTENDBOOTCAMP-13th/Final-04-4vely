@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 /**
  * 사용자 활동 추적 훅
- * 자동 로그인이 체크되지 않은 상태에서 2시간 비활성 시 자동 로그아웃
+ * 자동 로그인이 체크되지 않은 상태에서 4시간 비활성 시 자동 로그아웃
  */
 export function useActivityTracker() {
   const { zustandUser, zustandLogout, updateActivity } = useAuth();
@@ -28,15 +28,15 @@ export function useActivityTracker() {
       timeoutRef.current = null;
     }
 
-    // 새로운 2시간 타이머 설정 (자동 로그인이 아닌 경우만)
+    // 새로운 4시간 타이머 설정 (자동 로그인이 아닌 경우만)
     if (zustandUser && !zustandUser.rememberLogin) {
       timeoutRef.current = setTimeout(
         () => {
-          console.log('[Activity Tracker] 2시간 비활성으로 자동 로그아웃');
+          console.log('[Activity Tracker] 4시간 비활성으로 자동 로그아웃');
           zustandLogout();
         },
-        2 * 60 * 60 * 1000,
-      ); // 2시간
+        4 * 60 * 60 * 1000,
+      ); // 4시간
     }
   }, [zustandUser, updateActivity, zustandLogout]);
 
@@ -64,11 +64,11 @@ export function useActivityTracker() {
 
     timeoutRef.current = setTimeout(
       () => {
-        console.log('[Activity Tracker] 2시간 비활성으로 자동 로그아웃');
+        console.log('[Activity Tracker] 4시간 비활성으로 자동 로그아웃');
         zustandLogout();
       },
-      2 * 60 * 60 * 1000,
-    ); // 2시간
+      4 * 60 * 60 * 1000,
+    ); // 4시간
 
     // 컴포넌트 언마운트 시 정리
     return () => {
@@ -86,15 +86,15 @@ export function useActivityTracker() {
   // 페이지 가시성 변경 처리 (탭 전환 감지)
   const handleVisibilityChange = useCallback(() => {
     if (!document.hidden && zustandUser && !zustandUser.rememberLogin) {
-      // 탭이 다시 활성화될 때 세션 검증 (2시간 체크)
+      // 탭이 다시 활성화될 때 세션 검증 (4시간 체크)
       const now = Date.now();
       const lastActivity = lastActivityRef.current;
       const sessionStart = zustandUser.sessionStartTime || now;
-      const twoHours = 2 * 60 * 60 * 1000;
+      const fourHours = 4 * 60 * 60 * 1000;
 
-      // 세션 시작 또는 마지막 활동 후 2시간 경과 체크
-      const sessionExpired = now - sessionStart > twoHours;
-      const activityExpired = now - lastActivity > twoHours;
+      // 세션 시작 또는 마지막 활동 후 4시간 경과 체크
+      const sessionExpired = now - sessionStart > fourHours;
+      const activityExpired = now - lastActivity > fourHours;
 
       if (sessionExpired || activityExpired) {
         console.log('[Activity Tracker] 탭 복귀 시 세션 만료 확인 - 자동 로그아웃');

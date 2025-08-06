@@ -15,8 +15,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     const result = await updateOrderStatusAction(orderId, status, action);
 
-    console.log(result);
-
     if (result.success) {
       return NextResponse.json(result, { status: 200 });
     } else {

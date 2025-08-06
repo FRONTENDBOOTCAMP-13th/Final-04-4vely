@@ -24,8 +24,8 @@ const CLIENT_ID = process.env.CLIENT_ID || '';
  * 사용자 로그인을 처리하고 성공 시 안전한 쿠키에 인증 정보를 저장
  *
  * 토큰 만료 시간:
- * - 자동 로그인 체크: user-auth 7일, refresh-token 14일
- * - 자동 로그인 미체크: user-auth 30분, refresh-token 2시간
+ * - 자동 로그인 체크: user-auth 7일, refresh-token 14일, JWT 7일
+ * - 자동 로그인 미체크: user-auth 4시간, refresh-token 8시간, JWT 4시간
  *
  * @param credentials - 로그인 자격 증명 (이메일, 비밀번호, 자동로그인 여부)
  * @returns 표준화된 API 응답 형태 (성공/실패 상태, 사용자 정보, 토큰)
@@ -41,9 +41,9 @@ export async function loginAction(credentials: LoginCredentials): Promise<LoginR
 
       // 자동 로그인 설정에 따른 토큰 만료시간 분기 설정
       // 자동 로그인 체크: 장기간 보관
-      // 자동 로그인 미체크: 단기간 보관
-      const userAuthMaxAge = credentials.rememberLogin ? 60 * 60 * 24 * 7 : 60 * 30; // 7일 or 30분
-      const refreshTokenMaxAge = credentials.rememberLogin ? 60 * 60 * 24 * 14 : 60 * 60 * 2; // 14일 or 2시간
+      // 자동 로그인 미체크: JWT 토큰 만료시간과 맞춤 (4시간)
+      const userAuthMaxAge = credentials.rememberLogin ? 60 * 60 * 24 * 7 : 60 * 60 * 4; // 7일 or 4시간
+      const refreshTokenMaxAge = credentials.rememberLogin ? 60 * 60 * 24 * 14 : 60 * 60 * 8; // 14일 or 8시간
 
       // 인증 데이터 구조 생성
       const authData = {
@@ -132,6 +132,7 @@ export async function refreshTokenAction(refreshToken?: string): Promise<Refresh
       headers: {
         'Content-Type': 'application/json',
         'Client-Id': CLIENT_ID,
+        ...(tokenToUse && { Authorization: `Bearer ${tokenToUse}` }),
       },
       credentials: 'include', // 쿠키 포함
     });
@@ -157,7 +158,7 @@ export async function refreshTokenAction(refreshToken?: string): Promise<Refresh
               httpOnly: false,
               secure: process.env.NODE_ENV === 'production',
               sameSite: 'strict',
-              maxAge: 60 * 60 * 24,
+              maxAge: 60 * 60 * 4, // 4시간으로 통일
               path: '/',
             });
           }
@@ -247,8 +248,11 @@ export async function logoutAction(): Promise<ApiRes<{ message: string }>> {
  */
 async function loginUser(credentials: LoginCredentials): Promise<LoginResult> {
   try {
+    // 자동 로그인 설정에 따른 JWT 토큰 만료 시간 설정
+    const expiresIn = credentials.rememberLogin ? '7d' : '4h'; // 자동 로그인: 7일, 일반 로그인: 4시간
+
     // API에 로그인 요청
-    const res = await fetch(`${API_URL}/users/login?expiresIn=1d`, {
+    const res = await fetch(`${API_URL}/users/login?expiresIn=${expiresIn}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
