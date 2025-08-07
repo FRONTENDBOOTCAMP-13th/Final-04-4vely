@@ -27,7 +27,7 @@ export default function MagazineCard({ post, priority = false }: MagazineCardPro
         <div className='flex items-center justify-between'>
           <h3 className='line-clamp-1 text-base font-semibold md:mt-2 md:text-xl'>{post.title}</h3>
           {/* 북마크 버튼 */}
-          <BookmarkButton targetId={post._id} type='post' myBookmarkId={post.myBookmarkId ?? undefined} revalidate={false} variant='icon' />
+          <BookmarkButton targetId={post._id} postSubType='magazine' type='post' myBookmarkId={post.myBookmarkId ?? undefined} revalidate={false} variant='icon' />
         </div>
         <p className='text-muted my-3 line-clamp-2 max-w-[80ch] text-sm md:mt-0 md:mb-10 md:text-base'>{post.content}</p>
         <div className='mt-4 grid w-full grid-cols-1 gap-1 md:grid-cols-[1fr_auto] md:items-center'>

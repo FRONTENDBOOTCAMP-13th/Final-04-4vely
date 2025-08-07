@@ -1,20 +1,19 @@
+// app/community/[id]/_components/ClientDetail.tsx
 'use client';
 
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
-
 import DeleteButton from '@/app/community/[id]/_components/DeleteButton';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/Avatar';
-import { Button } from '@/components/ui/Button';
-
 import UpdateButton from '@/app/community/[id]/_components/UpdateButton';
 import { formatDate } from '@/app/my-page/my-plants/_utils/diaryUtils';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/AlertDialog';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/Avatar';
 import BookmarkButton from '@/components/ui/BookmarkButton';
+import { Button } from '@/components/ui/Button';
 import { createComment, deleteComment, fetchComments, updateComment } from '@/lib/functions/communityFunctions';
 import { useAuth } from '@/store/authStore';
 import { CommunityComment, Post } from '@/types/commnunity.types';
 import { Eye, Heart, MessageCircle } from 'lucide-react';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 export default function ClientDetail({ post }: { post: Post }) {
   const { id, title, coverImage, contents, author, createdAt, stats, name, nickname, species } = post;
@@ -29,15 +28,9 @@ export default function ClientDetail({ post }: { post: Post }) {
   const token = zustandUser?.token?.accessToken || session?.accessToken;
 
   useEffect(() => {
-    const loadComments = async () => {
-      try {
-        const res = await fetchComments(id);
-        setComments(res);
-      } catch (e) {
-        console.error('댓글 로드 실패', e);
-      }
-    };
-    loadComments();
+    fetchComments(id)
+      .then(setComments)
+      .catch((e) => console.error('댓글 로드 실패', e));
   }, [id]);
 
   const handleCommentSubmit = async () => {
@@ -54,24 +47,22 @@ export default function ClientDetail({ post }: { post: Post }) {
     }
   };
 
-  // 댓글 수정
-  async function handleUpdate(commentId: string) {
+  const handleUpdate = async (commentId: string) => {
     if (!editingContent.trim() || !isLoggedIn || !token) return;
     const updated = await updateComment(id, commentId, editingContent, token);
     setComments((cs) => cs.map((c) => (c._id === commentId ? updated : c)));
     setEditingId(null);
-  }
+  };
 
-  // 댓글 삭제
-  async function handleDelete(commentId: string) {
+  const handleDelete = (commentId: string) => {
     setDeleteDialog({ open: true, commentId });
-  }
-  async function confirmDelete() {
+  };
+  const confirmDelete = async () => {
     if (!token || !deleteDialog.commentId) return;
     await deleteComment(id, deleteDialog.commentId, token);
     setComments((cs) => cs.filter((c) => c._id !== deleteDialog.commentId));
     setDeleteDialog({ open: false, commentId: null });
-  }
+  };
 
   return (
     <div className='overflow-x-hidden'>
@@ -79,28 +70,28 @@ export default function ClientDetail({ post }: { post: Post }) {
       <div className='relative h-50 w-full md:h-60'>{coverImage && <Image src={coverImage} alt='대표 이미지' fill sizes='(max-width: 640px) 100vw, 640px' priority className='object-cover' />}</div>
 
       <main className='mx-auto w-full max-w-4xl px-4 py-10 md:p-6 lg:p-8'>
-        {/* 제목 및 메타 영역 */}
+        {/* 제목 및 메타 */}
         <section className='mb-10'>
           <h1 className='mb-4 text-xl font-semibold md:text-2xl'>{title}</h1>
-
           <div className='mt-4 flex items-center justify-between'>
             <div className='flex items-center gap-2'>
               <Avatar className='h-8 w-8'>{author.avatar ? <AvatarImage src={author.avatar} alt={author.username} /> : <AvatarFallback>{author.username.charAt(0)}</AvatarFallback>}</Avatar>
               <span>{author.username}</span>
             </div>
-
             <div className='flex flex-col items-end space-y-2 text-sm'>
               <span>{formatDate(createdAt)}</span>
               <div className='flex items-center gap-2'>
-                <UpdateButton postId={id} />
-                <DeleteButton postId={id} />
+                {/* 수정/삭제 버튼에 author.id 전달 */}
+                <UpdateButton postId={id} authorId={author.id} />
+                <DeleteButton postId={id} authorId={author.id} />
               </div>
             </div>
           </div>
         </section>
+
         <hr className='mb-10 border-gray-300' />
 
-        {/* 정보테이블 */}
+        {/* 정보 테이블 */}
         <section className='mb-10 rounded-3xl'>
           <div className='overflow-hidden rounded border bg-white'>
             <table className='w-full border-collapse text-sm'>
@@ -122,12 +113,12 @@ export default function ClientDetail({ post }: { post: Post }) {
           </div>
         </section>
 
-        {/* 콘텐츠 블록들 */}
+        {/* 콘텐츠 블록 */}
         {contents.map((block) => (
           <section key={block.id} className='mx-auto mb-15 max-w-[50rem] px-5 text-center'>
             {block.postImage && (
               <div className='relative mx-auto mb-10 aspect-[3/4] max-w-[30rem] overflow-hidden rounded-xl border'>
-                <Image src={block.postImage} alt={'첨부 이미지'} fill priority className='object-cover' />
+                <Image src={block.postImage} alt='첨부 이미지' fill priority className='object-cover' />
               </div>
             )}
             {block.content && (
@@ -166,7 +157,7 @@ export default function ClientDetail({ post }: { post: Post }) {
           </div>
         </section>
 
-        {/* 댓글 입력 및 리스트 */}
+        {/* 댓글 입력 */}
         <section className='mb-10'>
           <h3 className='mb-3 text-sm font-semibold'>댓글 목록</h3>
           <div className='flex items-start gap-4'>
@@ -177,12 +168,12 @@ export default function ClientDetail({ post }: { post: Post }) {
           </div>
         </section>
 
-        <section className='space-y-6'>
+        <section className='space-y-3'>
           {comments.length === 0 ? (
             <p className='text-center text-gray-500'>아직 아무 댓글도 없습니다. 첫 댓글을 남겨보세요!</p>
           ) : (
             comments.map((comment: CommunityComment) => (
-              <div key={comment._id} className='flex gap-3'>
+              <div key={comment._id} className='flex gap-3 border-t pt-6'>
                 <Avatar className='h-9 w-9 shrink-0'>{comment.user.image ? <AvatarImage src={comment.user.image} alt={comment.user.name} /> : <AvatarFallback>{comment.user.name.charAt(0)}</AvatarFallback>}</Avatar>
                 <div className='flex-1'>
                   <div className='mb-1 flex items-center justify-between gap-2'>
@@ -215,19 +206,19 @@ export default function ClientDetail({ post }: { post: Post }) {
                         </div>
                       ))}
                   </div>
-
                   {editingId === comment._id ? (
                     <textarea value={editingContent} onChange={(e) => setEditingContent(e.target.value)} className='mb-2 w-full resize-none rounded border px-3 py-2 text-base' />
                   ) : (
-                    <div className='p-4 text-base leading-relaxed whitespace-pre-wrap'>{comment.content}</div>
+                    <div className='p-4 text-sm leading-relaxed whitespace-pre-wrap md:text-base'>{comment.content}</div>
                   )}
                 </div>
               </div>
             ))
           )}
         </section>
-        {/* 댓글 삭제 확인 다이얼로그 */}
-        <AlertDialog open={deleteDialog.open} onOpenChange={(open) => setDeleteDialog((prev) => ({ ...prev, open }))}>
+
+        {/* 댓글 삭제 다이얼로그 */}
+        <AlertDialog open={deleteDialog.open} onOpenChange={(open) => setDeleteDialog((p) => ({ ...p, open }))}>
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>정말 삭제하시겠습니까?</AlertDialogTitle>

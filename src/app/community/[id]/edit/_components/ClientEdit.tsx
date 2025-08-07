@@ -29,10 +29,12 @@ export default function ClientEdit({ postId }: ClientEditProps) {
   const { zustandUser, session } = useAuth();
   const token = zustandUser?.token?.accessToken || session?.accessToken;
 
-  // cover 파일 + preview URL
+  // Cover 이미지 상태 + Preview Blob URL
   const [cover, setCover] = useState<File | string | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
 
+  // 본문 이미지들 Preview Blob URL (id별로 캐싱)
+  const [postImagePreviews, setPostImagePreviews] = useState<{ [id: string]: string }>({});
   const [postForms, setPostForms] = useState<PostForm[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -44,12 +46,11 @@ export default function ClientEdit({ postId }: ClientEditProps) {
   const [successDialog, setSuccessDialog] = useState(false);
   const [titleErrorDialog, setTitleErrorDialog] = useState(false);
 
-  // 1) 게시글 로드 → cover & forms 초기화
+  // 게시글 로드 및 초기화
   useEffect(() => {
     async function loadPost() {
       try {
         const post = await fetchPostById(postId);
-        // 커버 및 미리보기 설정
         setCover(post.coverImage || null);
         setCoverPreview(post.coverImage || null);
 
@@ -57,6 +58,7 @@ export default function ClientEdit({ postId }: ClientEditProps) {
         setNickname(post.nickname || '');
         setSpecies(post.species || '');
 
+        // 본문 이미지 Blob URL 초기화
         const forms = post.contents.map((c, idx) => ({
           id: c.id,
           title: c.title || (idx === 0 ? post.title : ''),
@@ -77,6 +79,8 @@ export default function ClientEdit({ postId }: ClientEditProps) {
                 },
               ],
         );
+        // 기존 이미지 src 저장 (string만)
+        setPostImagePreviews(forms.reduce((acc, f) => (f.postImage && typeof f.postImage === 'string' ? { ...acc, [f.id]: f.postImage } : acc), {}));
       } catch {
         alert('게시글 정보를 불러오지 못했습니다.');
       }
@@ -84,57 +88,58 @@ export default function ClientEdit({ postId }: ClientEditProps) {
     loadPost();
   }, [postId]);
 
-  // 2) cover input change → Blob URL 생성/해제
+  // Cover input change: Blob URL 생성/정리
   const handleCoverChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
     setCover(file);
-    // 이전 Blob URL 해제
-    if (coverPreview && coverPreview.startsWith('blob:')) {
-      URL.revokeObjectURL(coverPreview);
-    }
-    // 새 preview 설정
-    if (file instanceof File) {
-      setCoverPreview(URL.createObjectURL(file));
-    } else if (typeof file === 'string') {
-      setCoverPreview(file);
-    } else {
-      setCoverPreview(null);
-    }
+    // 기존 Blob URL 해제
+    if (coverPreview && coverPreview.startsWith('blob:')) URL.revokeObjectURL(coverPreview);
+    if (file instanceof File) setCoverPreview(URL.createObjectURL(file));
+    else if (typeof file === 'string') setCoverPreview(file);
+    else setCoverPreview(null);
   };
 
-  // 언마운트 시 Blob URL 해제
+  // postImage 변경 시 Blob URL 캐싱
+  const handlePostImageChange = (formId: string, file: File | null) => {
+    updatePostForm(formId, 'postImage', file);
+    setPostImagePreviews((prev) => {
+      if (prev[formId] && prev[formId].startsWith('blob:')) URL.revokeObjectURL(prev[formId]);
+      return file ? { ...prev, [formId]: URL.createObjectURL(file) } : { ...prev, [formId]: '' };
+    });
+  };
+
+  // 언마운트시 Blob URL 해제
   useEffect(() => {
     return () => {
-      if (coverPreview && coverPreview.startsWith('blob:')) {
-        URL.revokeObjectURL(coverPreview);
-      }
+      if (coverPreview && coverPreview.startsWith('blob:')) URL.revokeObjectURL(coverPreview);
+      Object.values(postImagePreviews).forEach((url) => {
+        if (url && url.startsWith('blob:')) URL.revokeObjectURL(url);
+      });
     };
-  }, [coverPreview]);
+  }, [coverPreview, postImagePreviews]);
 
+  // 폼 갱신 함수
   const updatePostForm = (formId: string, field: keyof PostForm, value: string | File | null) => {
     setPostForms((prev) => prev.map((f) => (f.id === formId ? { ...f, [field]: value } : f)));
   };
 
   const addNewForm = () => {
     if (postForms.length >= MAX_FORMS) return;
-    setPostForms((prev) => [
-      ...prev,
-      {
-        id: Date.now().toString(),
-        title: '',
-        content: '',
-        postImage: null,
-        thumbnailImage: null,
-      },
-    ]);
+    setPostForms((prev) => [...prev, { id: Date.now().toString(), title: '', content: '', postImage: null, thumbnailImage: null }]);
   };
 
   const removePostForm = (formId: string) => {
     if (postForms.length <= 1) return;
     setPostForms((prev) => prev.filter((f) => f.id !== formId));
+    setPostImagePreviews((prev) => {
+      if (prev[formId] && prev[formId].startsWith('blob:')) URL.revokeObjectURL(prev[formId]);
+      const copy = { ...prev };
+      delete copy[formId];
+      return copy;
+    });
   };
 
-  // 3) 수정 제출
+  // 수정 제출
   const handleSubmit = async () => {
     const first = postForms[0];
     if (!first || !first.title.trim()) {
@@ -143,7 +148,7 @@ export default function ClientEdit({ postId }: ClientEditProps) {
     }
     setIsSubmitting(true);
     try {
-      // 커버 업로드 혹은 기존 URL 유지
+      // 커버 업로드
       const coverUrl = typeof cover === 'string' ? cover : cover ? await uploadFile(cover) : '';
 
       // 본문 이미지 업로드
@@ -169,10 +174,8 @@ export default function ClientEdit({ postId }: ClientEditProps) {
         },
         token || '',
       );
-
       setSuccessDialog(true);
     } catch (e) {
-      console.error('수정 에러:', e);
       alert(e instanceof Error ? e.message : '수정에 실패했습니다.');
     } finally {
       setIsSubmitting(false);
@@ -233,7 +236,7 @@ export default function ClientEdit({ postId }: ClientEditProps) {
       <h1 className='w-full max-w-4xl px-4 text-3xl font-bold'>게시글 수정</h1>
 
       {/* 정보 입력 */}
-      <section className='mb-8 w-full max-w-4xl rounded-3xl bg-teal-50 p-6'>
+      <section className='mb-8 w-full max-w-4xl overflow-hidden rounded-2xl border bg-stone-50 p-6'>
         <h3 className='mb-4 text-lg font-semibold'>정보</h3>
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-3'>
           {/* 식물이름 (필수) */}
@@ -254,11 +257,10 @@ export default function ClientEdit({ postId }: ClientEditProps) {
               }}
               placeholder='예: 안스리움'
               disabled={isSubmitting}
-              className={`mt-1 h-10 min-w-[160px] rounded border px-3 text-sm transition focus:ring-2 focus:ring-green-400 focus:outline-none ${nameError ? 'border-red-500' : 'border-gray-300'}`}
+              className={`mt-1 h-10 min-w-[160px] rounded border px-3 text-sm transition hover:border-green-500 focus:ring-1 focus:ring-green-400 focus:outline-none ${nameError ? 'border-red-500 hover:border-red-400 focus:ring-1 focus:ring-red-400' : 'border-gray-300 hover:border-green-500'}`}
             />
             {nameError && <p className='mt-1 text-xs text-red-500'>식물 이름을 입력해주세요.</p>}
           </div>
-
           {/* 애칭 */}
           <div className='flex flex-col'>
             <label htmlFor='nickname' className='text-sm font-medium text-gray-700'>
@@ -271,10 +273,9 @@ export default function ClientEdit({ postId }: ClientEditProps) {
               onChange={(e) => setNickname(e.target.value)}
               placeholder='애칭을 입력하세요 (선택)'
               disabled={isSubmitting}
-              className='mt-1 h-10 min-w-[140px] rounded border border-gray-300 px-3 text-sm transition hover:border-green-500 focus:ring-2 focus:ring-green-400 focus:outline-none'
+              className='mt-1 h-10 min-w-[140px] rounded border border-gray-300 px-3 text-sm transition hover:border-green-500 focus:ring-1 focus:ring-green-400 focus:outline-none'
             />
           </div>
-
           {/* 종류 */}
           <div className='flex flex-col'>
             <label htmlFor='species' className='text-sm font-medium text-gray-700'>
@@ -287,7 +288,7 @@ export default function ClientEdit({ postId }: ClientEditProps) {
               onChange={(e) => setSpecies(e.target.value)}
               placeholder='종류를 입력하세요 (선택)'
               disabled={isSubmitting}
-              className='mt-1 h-10 min-w-[140px] rounded border border-gray-300 px-3 text-sm transition hover:border-green-500 focus:ring-2 focus:ring-green-400 focus:outline-none'
+              className='mt-1 h-10 min-w-[140px] rounded border border-gray-300 px-3 text-sm transition hover:border-green-500 focus:ring-1 focus:ring-green-400 focus:outline-none'
             />
           </div>
         </div>
@@ -301,7 +302,7 @@ export default function ClientEdit({ postId }: ClientEditProps) {
             <div key={form.id}>
               {form.thumbnailImage ? (
                 <div className='relative h-20 w-20 overflow-hidden rounded-lg border border-gray-300'>
-                  <Image fill src={typeof form.thumbnailImage === 'string' ? form.thumbnailImage : URL.createObjectURL(form.thumbnailImage)} alt='thumb' unoptimized className='object-cover' />
+                  <Image fill src={typeof form.thumbnailImage === 'string' ? form.thumbnailImage : postImagePreviews[form.id] || ''} alt='thumb' unoptimized className='object-cover' />
                 </div>
               ) : (
                 <div className='flex h-20 w-20 items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-400'>
@@ -313,9 +314,9 @@ export default function ClientEdit({ postId }: ClientEditProps) {
         </div>
 
         {/* 글쓰기 폼 영역 */}
-        <div className='flex-1 space-y-6 bg-teal-50'>
+        <div className='flex-1 space-y-6 rounded-lg'>
           {postForms.map((form, idx) => (
-            <section key={form.id} className='rounded-lg border border-gray-200 p-4 transition hover:shadow-md'>
+            <section key={form.id} className='bg- rounded-lg border bg-stone-50 p-4 transition hover:shadow-md'>
               <div className='mb-6 flex items-center gap-4'>
                 {idx === 0 ? (
                   <>
@@ -325,7 +326,7 @@ export default function ClientEdit({ postId }: ClientEditProps) {
                       maxLength={80}
                       value={form.title}
                       onChange={(e) => updatePostForm(form.id, 'title', e.target.value)}
-                      className='h-12 flex-1 rounded-lg border border-gray-300 px-4 transition hover:border-green-500 focus:ring-2 focus:ring-green-400 focus:outline-none'
+                      className='h-12 flex-1 rounded-lg border border-gray-300 px-4 transition hover:border-green-500 focus:ring-1 focus:ring-green-400 focus:outline-none'
                       disabled={isSubmitting}
                     />
                     <Button variant='destructive' onClick={() => removePostForm(form.id)} disabled={isSubmitting || postForms.length === 1}>
@@ -343,7 +344,7 @@ export default function ClientEdit({ postId }: ClientEditProps) {
 
               <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
                 {/* 이미지 업로드 */}
-                <div className='relative min-h-[200px] overflow-hidden rounded-lg border border-gray-300 bg-gray-100'>
+                <div className='relative min-h-[200px] overflow-hidden rounded-lg border border-gray-300 bg-gray-100 transition'>
                   <label htmlFor={`post-upload-${form.id}`} className='absolute inset-0 flex cursor-pointer items-center justify-center text-gray-400'>
                     {!form.postImage && (
                       <div className='text-center'>
@@ -358,7 +359,7 @@ export default function ClientEdit({ postId }: ClientEditProps) {
                     accept='image/*'
                     onChange={(e) => {
                       const file = e.target.files?.[0] ?? null;
-                      updatePostForm(form.id, 'postImage', file);
+                      handlePostImageChange(form.id, file);
                       updatePostForm(form.id, 'thumbnailImage', file);
                     }}
                     className='hidden'
@@ -366,14 +367,14 @@ export default function ClientEdit({ postId }: ClientEditProps) {
                   />
                   {form.postImage && (
                     <>
-                      <Image fill src={typeof form.postImage === 'string' ? form.postImage : URL.createObjectURL(form.postImage)} alt='post' unoptimized className='object-cover' />
+                      <Image fill src={typeof form.postImage === 'string' ? form.postImage : postImagePreviews[form.id] || ''} alt='post' unoptimized className='object-cover' />
                       <button
                         type='button'
                         onClick={() => {
-                          updatePostForm(form.id, 'postImage', null);
+                          handlePostImageChange(form.id, null);
                           updatePostForm(form.id, 'thumbnailImage', null);
                         }}
-                        className='absolute top-2 right-2 text-gray-400 transition hover:text-gray-600'
+                        className='text-secondary absolute top-2 right-2 cursor-pointer rounded-full bg-white'
                         disabled={isSubmitting}
                       >
                         <X size={20} />
@@ -387,7 +388,7 @@ export default function ClientEdit({ postId }: ClientEditProps) {
                   placeholder='내용을 입력해주세요.'
                   value={form.content}
                   onChange={(e) => updatePostForm(form.id, 'content', e.target.value)}
-                  className='min-h-[200px] w-full resize-none rounded-lg border border-gray-300 bg-white p-4 transition hover:border-green-500 focus:ring-2 focus:ring-green-400 focus:outline-none'
+                  className='min-h-[200px] w-full resize-none rounded-lg border border-gray-300 bg-white p-4 transition hover:border-green-500 focus:ring-1 focus:ring-green-400 focus:outline-none'
                   disabled={isSubmitting}
                 />
               </div>
@@ -406,12 +407,10 @@ export default function ClientEdit({ postId }: ClientEditProps) {
             </span>
           </Button>
         </div>
-
         <div className='flex gap-2'>
-          <Button variant='secondary' onClick={() => router.push(`/community/${postId}`)} disabled={isSubmitting}>
+          <Button variant='default' onClick={() => router.push(`/community/${postId}`)} disabled={isSubmitting}>
             취소
           </Button>
-
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant='primary' disabled={isSubmitting}>

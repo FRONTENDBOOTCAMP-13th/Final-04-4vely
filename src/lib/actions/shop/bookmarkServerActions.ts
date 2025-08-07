@@ -16,6 +16,7 @@ const CLIENT_ID = process.env.CLIENT_ID || 'febc13-final04-emjf';
 
 interface ToggleBookmarkOptions {
   revalidate?: boolean;
+  postSubType?: 'magazine' | 'community';
 }
 
 /**
@@ -227,7 +228,7 @@ async function removeBookmark(bookmarkId: number, accessToken: string) {
  * @param {number} targetId - 대상 ID
  * @param {BookmarkType} type - 북마크 타입
  */
-function revalidateBookmarkPages(targetId: number, type: BookmarkType) {
+function revalidateBookmarkPages(targetId: number, type: BookmarkType, postSubType?: 'magazine' | 'community') {
   // 북마크 목록 페이지
   revalidatePath('/my-page/bookmarks');
 
@@ -238,8 +239,13 @@ function revalidateBookmarkPages(targetId: number, type: BookmarkType) {
       revalidatePath(`/shop/products/${targetId}`);
       break;
     case 'post':
-      revalidatePath('/community');
-      revalidatePath(`/community/${targetId}`);
+      if (postSubType === 'magazine') {
+        revalidatePath('/green-magazine');
+        revalidatePath(`/green-magazine/${targetId}`);
+      } else {
+        revalidatePath('/community');
+        revalidatePath(`/community/${targetId}`);
+      }
       break;
     case 'user':
       revalidatePath(`/users/${targetId}`);

@@ -1,7 +1,7 @@
 // Header에서 사용하는 Tailwind CSS 클래스 정의
 export const HEADER_CONTAINER = 'relative z-10 lg:mx-20 flex max-w-8xl items-center  justify-between px-4 py-4 sm:px-6 md:px-8 md:py-6';
 export const NAV_LINK = 't-small text-secondary';
-export const MOBILE_MENU_LINK = 't-body rounded-lg px-4 py-2 text-center text-secondary transition-colors duration-150 hover:bg-green-50 w-full';
+export const MOBILE_MENU_LINK = 't-body rounded-lg px-4 py-2 text-center text-secondary transition-colors duration-150 hover:bg-[#eae4d8] w-full';
 
 // 메뉴 항목 배열
 export const menuLinks = [

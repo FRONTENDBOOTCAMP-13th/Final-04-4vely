@@ -8,9 +8,7 @@ export default async function CommunityDetailPage({ params }: { params: Promise<
 
   // 1) 게시글 데이터 가져오기
   const post = await fetchPostById(id).catch(() => null);
-  if (!post) {
-    notFound();
-  }
+  if (!post) return notFound();
 
   // 2) 내 북마크 정보 가져오기
   const bookmark = await getBookmarkByTarget(Number(id), 'post');
@@ -21,6 +19,5 @@ export default async function CommunityDetailPage({ params }: { params: Promise<
     myBookmarkId: bookmark?._id ?? null,
   };
 
-  // 4) 클라이언트 컴포넌트에 전달
   return <ClientDetail post={postWithBookmark} />;
 }

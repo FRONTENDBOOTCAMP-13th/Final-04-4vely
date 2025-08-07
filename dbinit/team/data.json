@@ -3,7 +3,7 @@
     {
       "email": "admin@market.com",
       "password": "$2a$10$GuEyVTkqijXx58GmQC.fW.WEShfxE/bk9hH3oiiEzLiYzdEHmjPva",
-      "name": "테스트 관리자",
+      "name": "초록이(관리자)",
       "phone": "01011112222",
       "address": "테스트시 테스트구 관리자동 123",
       "type": "admin",
@@ -16,7 +16,7 @@
     {
       "email": "test@test.com",
       "password": "$2a$10$Adma5vG8KIGixsl9TWdOCejFVmjp2/KLwk960jPe5jRv4Tz9hp01u",
-      "name": "테스트 유저 1",
+      "name": "김멋사",
       "phone": "01012345678",
       "address": "테스트시 테스트구 테스트동 123",
       "type": "user",
@@ -29,7 +29,7 @@
     {
       "email": "test2@test.com",
       "password": "$2a$10$Adma5vG8KIGixsl9TWdOCejFVmjp2/KLwk960jPe5jRv4Tz9hp01u",
-      "name": "테스트 유저 2",
+      "name": "포블리",
       "phone": "01012345678",
       "address": "테스트시 테스트구 테스트동 456",
       "type": "user",
@@ -1755,22 +1755,22 @@
       "user": {
         "_id": 3,
         "name": "포블리",
-        "image": "uploadFiles/user_test02.webp"
+        "image": "uploadFiles/eureka_lemon_tree_black.webp"
       }
     },
     {
       "order_id": 4,
-      "product_id": 1,
+      "product_id": 5,
       "rating": 3,
       "content": "배송 중에 살짝 상처가 났지만 식물 자체는 건강해요. 포장을 좀 더 신경써주시면 좋을 것 같아요. 그 밖에는 다 좋습니다!",
       "extra": {
         "title": "Review"
       },
-      "user_id": 1,
+      "user_id": 3,
       "user": {
-        "_id": 1,
-        "name": "테스트 관리자",
-        "image": "uploadFiles/user_admin.webp"
+        "_id": 3,
+        "name": "단팥빵",
+        "image": "uploadFiles/coffee_plant_gray.webp"
       }
     }
   ],
@@ -1888,101 +1888,347 @@
       "type": "post",
       "target_id": 2,
       "memo": "커뮤니티 게시물 북마크 테스트 2"
+    },
+    {
+      "user_id": 50,
+      "user": {
+        "_id": 50,
+        "name": "김서연",
+        "image": "uploadFiles/user_test01.webp"
+      },
+      "type": "post",
+      "target_id": 11,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 51,
+      "user": {
+        "_id": 51,
+        "name": "박지후",
+        "image": "uploadFiles/user_test01.webp"
+      },
+      "type": "post",
+      "target_id": 12,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 52,
+      "user": {
+        "_id": 52,
+        "name": "이하은",
+        "image": "uploadFiles/user_test01.webp"
+      },
+      "type": "post",
+      "target_id": 9,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 53,
+      "user": {
+        "_id": 53,
+        "name": "정우진",
+        "image": "uploadFiles/user_test01.webp"
+      },
+      "type": "post",
+      "target_id": 10,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 54,
+      "user": {
+        "_id": 54,
+        "name": "최민서",
+        "image": "uploadFiles/user_test01.webp"
+      },
+      "type": "post",
+      "target_id": 11,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 55,
+      "user": {
+        "_id": 55,
+        "name": "윤서윤",
+        "image": "uploadFiles/user_test01.webp"
+      },
+      "type": "post",
+      "target_id": 12,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 56,
+      "user": {
+        "_id": 56,
+        "name": "한지호",
+        "image": "uploadFiles/user_test01.webp"
+      },
+      "type": "post",
+      "target_id": 9,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 57,
+      "user": {
+        "_id": 57,
+        "name": "배예린",
+        "image": "uploadFiles/user_test01.webp"
+      },
+      "type": "post",
+      "target_id": 10,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 58,
+      "user": {
+        "_id": 58,
+        "name": "신도윤",
+        "image": "uploadFiles/user_test01.webp"
+      },
+      "type": "post",
+      "target_id": 11,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 59,
+      "user": {
+        "_id": 59,
+        "name": "오하진",
+        "image": "uploadFiles/user_test01.webp"
+      },
+      "type": "post",
+      "target_id": 12,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 60,
+      "user": {
+        "_id": 60,
+        "name": "초록숲거닐기",
+        "image": "uploadFiles/user_test01.webp"
+      },
+      "type": "post",
+      "target_id": 11,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 61,
+      "user": {
+        "_id": 61,
+        "name": "햇살한줌",
+        "image": "uploadFiles/user_test01.webp"
+      },
+      "type": "post",
+      "target_id": 12,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 62,
+      "user": {
+        "_id": 62,
+        "name": "반려초보",
+        "image": "uploadFiles/user_test01.webp"
+      },
+      "type": "post",
+      "target_id": 9,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 63,
+      "user": {
+        "_id": 63,
+        "name": "선인장연구소",
+        "image": "uploadFiles/user_test01.webp"
+      },
+      "type": "post",
+      "target_id": 10,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 64,
+      "user": {
+        "_id": 64,
+        "name": "흙먼지러버",
+        "image": "uploadFiles/user_test01.webp"
+      },
+      "type": "post",
+      "target_id": 11,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 65,
+      "user": {
+        "_id": 65,
+        "name": "식물과나",
+        "image": "uploadFiles/user_test01.webp"
+      },
+      "type": "post",
+      "target_id": 12,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 66,
+      "user": {
+        "_id": 66,
+        "name": "초록마음집사",
+        "image": "uploadFiles/user_test01.webp"
+      },
+      "type": "post",
+      "target_id": 9,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 67,
+      "user": {
+        "_id": 67,
+        "name": "야자수그늘",
+        "image": "uploadFiles/user_test01.webp"
+      },
+      "type": "post",
+      "target_id": 10,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 68,
+      "user": {
+        "_id": 68,
+        "name": "그린핑거스",
+        "image": "uploadFiles/user_test01.webp"
+      },
+      "type": "post",
+      "target_id": 11,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 69,
+      "user": {
+        "_id": 69,
+        "name": "이끼정원가",
+        "image": "uploadFiles/user_test01.webp"
+      },
+      "type": "post",
+      "target_id": 12,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 70,
+      "user": {
+        "_id": 70,
+        "name": "풀잎노트",
+        "image": "uploadFiles/user_test02.webp"
+      },
+      "type": "post",
+      "target_id": 11,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 71,
+      "user": {
+        "_id": 71,
+        "name": "새싹비타민",
+        "image": "uploadFiles/user_test02.webp"
+      },
+      "type": "post",
+      "target_id": 12,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 72,
+      "user": {
+        "_id": 72,
+        "name": "초록테라피",
+        "image": "uploadFiles/user_test02.webp"
+      },
+      "type": "post",
+      "target_id": 11,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 73,
+      "user": {
+        "_id": 73,
+        "name": "화분속고양이",
+        "image": "uploadFiles/user_test02.webp"
+      },
+      "type": "post",
+      "target_id": 12,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 74,
+      "user": {
+        "_id": 74,
+        "name": "식물보호자",
+        "image": "uploadFiles/user_test02.webp"
+      },
+      "type": "post",
+      "target_id": 11,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 75,
+      "user": {
+        "_id": 75,
+        "name": "베란다정원사",
+        "image": "uploadFiles/user_test02.webp"
+      },
+      "type": "post",
+      "target_id": 12,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 76,
+      "user": {
+        "_id": 76,
+        "name": "이파리수집가",
+        "image": "uploadFiles/user_test02.webp"
+      },
+      "type": "post",
+      "target_id": 11,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 77,
+      "user": {
+        "_id": 77,
+        "name": "흙과살아요",
+        "image": "uploadFiles/user_test02.webp"
+      },
+      "type": "post",
+      "target_id": 9,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 78,
+      "user": {
+        "_id": 78,
+        "name": "식집사이야기",
+        "image": "uploadFiles/user_test02.webp"
+      },
+      "type": "post",
+      "target_id": 10,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
+    },
+    {
+      "user_id": 79,
+      "user": {
+        "_id": 79,
+        "name": "초록숨결",
+        "image": "uploadFiles/user_test02.webp"
+      },
+      "type": "post",
+      "target_id": 12,
+      "memo": "커뮤니티 북마크 수를 위한 dummy user"
     }
   ],
   "post": [
-    {
-      "type": "community",
-      "views": 25,
-      "user": {
-        "_id": 2,
-        "name": "테스트 유저 1",
-        "image": "uploadFiles/user_test01.webp"
-      },
-      "title": "테스트용 커뮤니티 게시물입니다!",
-      "content": "테스트용 커뮤니티 게시물 내용입니다.",
-      "image": "uploadFiles/user_test01.webp",
-      "replies": [
-        {
-          "_id": 1,
-          "user_id": 3,
-          "user": {
-            "_id": 3,
-            "name": "테스트 유저 2",
-            "email": "test2@test.com",
-            "image": "user_test02.webp"
-          },
-          "content": "테스트용 커뮤니티 게시물의 댓글입니다.",
-          "like": 5,
-          "createdAt": "2025.07.21 05:37:30",
-          "updatedAt": "2025.07.20 15:37:30"
-        },
-        {
-          "_id": 2,
-          "user_id": 1,
-          "user": {
-            "_id": 1,
-            "name": "테스트 관리자",
-            "email": "admin@market.com",
-            "image": "user_admin.webp"
-          },
-          "content": "안녕하세요 테스트 관리자입니다. 규칙위반 하셨습니다.",
-          "like": 7,
-          "createdAt": "2025.07.25 23:37:30",
-          "updatedAt": "2025.07.20 08:37:30"
-        }
-      ]
-    },
-    {
-      "type": "community",
-      "views": 30,
-      "user": {
-        "_id": 1,
-        "name": "테스트 관리자",
-        "image": "uploadFiles/user_admin.webp"
-      },
-      "title": "관리자가 작성한 테스트용 커뮤니티 게시물입니다!",
-      "content": "관리자가 작성한 테스트용 커뮤니티 게시물 내용입니다.",
-      "image": "uploadFiles/user_test01.webp",
-      "replies": [
-        {
-          "_id": 1,
-          "user_id": 2,
-          "user": {
-            "_id": 2,
-            "name": "테스트 유저 1",
-            "email": "test@test.com",
-            "image": "user_test01.webp"
-          },
-          "content": "테스트용 커뮤니티 게시물의 댓글입니다. 작성자는 테스트 유저 01입니다.",
-          "like": 5,
-          "createdAt": "2025.07.21 05:37:30",
-          "updatedAt": "2025.07.20 15:37:30"
-        },
-        {
-          "_id": 2,
-          "user_id": 1,
-          "user": {
-            "_id": 1,
-            "name": "테스트 관리자",
-            "email": "admin@market.com",
-            "image": "user_admin.webp"
-          },
-          "content": "안녕하세요 테스트 관리자입니다. 규칙위반 하셨습니다.",
-          "like": 7,
-          "createdAt": "2025.07.25 23:37:30",
-          "updatedAt": "2025.07.20 08:37:30"
-        }
-      ]
-    },
     {
       "type": "magazine",
       "title": "햇살 따라 바꾸는 식물 배치, 계절마다 달라요",
       "content": "계절이 바뀌면 햇살의 방향도 달라지고, 실내로 들어오는 빛의 양도 변합니다. 빛에 민감한 식물일수록 위치에 따라 건강 상태가 크게 달라지기 때문에, 계절별로 햇빛을 따라 식물 배치를 조정해주는 것이 중요합니다. 이 글에서는 집 안 채광 조건을 고려해 계절마다 어떻게 식물의 자리를 바꿔줄 수 있는지, 그리고 그에 따른 인테리어 효과까지 함께 소개합니다.",
       "image": "uploadFiles/summer_curtain_light.webp",
-      "bookmarks": 150,
+      "bookmarks": 0,
       "myBookmarkId": null,
-      "views": 500,
+      "views": 520,
       "user": {
         "_id": 1,
         "name": "초록이(관리자)",
@@ -2011,7 +2257,7 @@
       "title": "작은 공간, 큰 변화: 선반 위 플랜테리어",
       "content": "좁은 집이라 식물을 둘 자리가 없다고 생각하는 분들이 많습니다. 하지만 벽이나 선반처럼 수직 공간을 활용하면 작은 공간에도 초록의 생기를 충분히 더할 수 있습니다. 이 글에서는 실내 선반을 활용한 식물 배치 팁과 공간 연출 아이디어를 소개합니다.",
       "image": "uploadFiles/wood_shelf_plants.webp",
-      "bookmarks": 200,
+      "bookmarks": 0,
       "myBookmarkId": null,
       "views": 675,
       "user": {
@@ -2042,9 +2288,9 @@
       "title": "과습에 약한 식물, 물 주는 기준은?",
       "content": "식물을 죽이는 가장 흔한 이유는 '물을 너무 자주 줘서'입니다. 흙이 마르기도 전에 또 물을 주면, 뿌리가 숨 쉴 공간을 잃고 썩기 쉽습니다. 이 글에서는 물주기 기준을 단순한 주기가 아니라 흙의 상태에 따라 판단하는 방법에 대해 이야기합니다.",
       "image": "uploadFiles/finger_soil_check.webp",
-      "bookmarks": 250,
+      "bookmarks": 0,
       "myBookmarkId": null,
-      "views": 600,
+      "views": 630,
       "user": {
         "_id": 1,
         "name": "초록이(관리자)",
@@ -2073,9 +2319,9 @@
       "title": "통풍이 좋은 공간에서 식물이 더 잘 자라는 이유",
       "content": "햇빛과 물은 많이들 신경 쓰지만, 식물에게 '공기의 흐름' 또한 필수적이라는 사실은 잘 알려지지 않았습니다. 통풍이 원활한 공간에서는 식물의 증산작용이 활발해지고, 병해도 덜 생깁니다. 이 글에서는 통풍의 중요성과 인테리어와의 조화에 대해 이야기합니다.",
       "image": "uploadFiles/plant_with_breeze.webp",
-      "bookmarks": 100,
+      "bookmarks": 0,
       "myBookmarkId": null,
-      "views": 400,
+      "views": 470,
       "user": {
         "_id": 1,
         "name": "초록이(관리자)",
@@ -2104,9 +2350,9 @@
       "title": "흙 없이도 키워요: 초보자를 위한 수경재배 가이드",
       "content": "흙 없이 식물을 키운다니 생소하게 느껴지시나요? 수경재배는 물만으로도 식물을 건강하게 기를 수 있는 방법입니다. 흙먼지가 없고 해충도 적기 때문에 실내 환경에도 좋고, 관리도 상대적으로 쉬워 초보자에게 인기 있는 방식입니다.",
       "image": "uploadFiles/hydroponics_starter.webp",
-      "bookmarks": 50,
+      "bookmarks": 0,
       "myBookmarkId": null,
-      "views": 300,
+      "views": 680,
       "user": {
         "_id": 1,
         "name": "초록이(관리자)",
@@ -2145,7 +2391,7 @@
       "user": {
         "_id": 2,
         "type": "user",
-        "name": "테스트 유저 1",
+        "name": "초록이(관리자)",
         "email": "test@test.com",
         "image": "uploadFiles/user_test01.webp"
       },
@@ -2160,7 +2406,7 @@
           },
           "user": {
             "_id": 2,
-            "name": "테스트 유저 1",
+            "name": "김멋사",
             "email": "test@test.com",
             "image": "uploadFiles/user_test01.webp"
           },
@@ -2183,7 +2429,7 @@
       "user": {
         "_id": 2,
         "type": "user",
-        "name": "테스트 유저 1",
+        "name": "초록이(관리자)",
         "email": "test@test.com",
         "image": "uploadFiles/user_test01.webp"
       },
@@ -2236,7 +2482,7 @@
       "user": {
         "_id": 2,
         "type": "user",
-        "name": "테스트 유저 1",
+        "name": "김멋사",
         "email": "test@test.com",
         "image": "uploadFiles/user_test01.webp"
       },
@@ -2269,12 +2515,12 @@
         "nickname": "없음",
         "species": "몬스테라 아단소니"
       },
-      "bookmarks": 102,
+      "bookmarks": 0,
       "views": 568,
       "user": {
         "_id": 2,
         "type": "user",
-        "name": "테스트 유저 1",
+        "name": "플린이",
         "email": "test@test.com",
         "image": "uploadFiles/user_test01.webp"
       },
@@ -2284,7 +2530,7 @@
           "content": "혹시 화분 밑으로 물 빠짐은 괜찮은가요? 흙이 항상 젖어 있으면 과습일 가능성이 높아요. 뿌리 상태 확인해보세요",
           "user": {
             "_id": 3,
-            "name": "테스트 유저 2",
+            "name": "자몽마싯다",
             "email": "test2@test.com",
             "image": "uploadFiles/user_test02.webp"
           },
@@ -2294,11 +2540,61 @@
           "content": "감사합니다~",
           "user": {
             "_id": 2,
-            "name": "테스트 유저 1",
+            "name": "플린이",
             "email": "test@test.com",
             "image": "uploadFiles/user_test01.webp"
           },
           "_id": 2
+        },
+        {
+          "_id": 4,
+          "content": "햇빛은 어느 정도 받고 있나요? 몬스테라는 간접광 좋아해요. 직광이면 잎이 탈 수도 있어요!",
+          "user": {
+            "_id": 4,
+            "name": "식물집사루나",
+            "email": "test4@test.com",
+            "image": "uploadFiles/olive_tree_brown.webp"
+          }
+        },
+        {
+          "_id": 5,
+          "content": "저도 비슷했는데 분갈이하고 나아졌어요! 혹시 뿌리가 화분 가득 찼을 수도 있어요.",
+          "user": {
+            "_id": 5,
+            "name": "초록톤톤",
+            "email": "test5@test.com",
+            "image": "uploadFiles/insam_black.webp"
+          }
+        },
+        {
+          "_id": 6,
+          "content": "잎이 노래지면 보통 물 주는 간격이 문제일 때가 많더라구요. 겉흙 마르고 이틀 뒤쯤 주는 거 추천드려요!",
+          "user": {
+            "_id": 6,
+            "name": "몬스테라러버",
+            "email": "test6@test.com",
+            "image": "uploadFiles/olive_tree_gray.webp"
+          }
+        },
+        {
+          "_id": 7,
+          "content": "습도 체크해보셨나요? 너무 건조하면 잎 끝부터 노래지더라구요ㅠㅠ 저는 물병 두 개 두고 해결했어요.",
+          "user": {
+            "_id": 7,
+            "name": "햇살좋은베란다",
+            "email": "test7@test.com",
+            "image": "uploadFiles/insam_gray.webp"
+          }
+        },
+        {
+          "_id": 8,
+          "content": "혹시 잎에 물 직접 닿게 하고 있진 않으세요? 그럼 잎 끝부터 상하더라구요!",
+          "user": {
+            "_id": 8,
+            "name": "그린이랑",
+            "email": "test8@test.com",
+            "image": "uploadFiles/olive_tree_black.webp"
+          }
         }
       ]
     },
@@ -2329,12 +2625,12 @@
         "nickname": "없음",
         "species": "하얀색 난초"
       },
-      "bookmarks": 502,
+      "bookmarks": 0,
       "views": 898,
       "user": {
         "_id": 3,
         "type": "user",
-        "name": "테스트 유저 2",
+        "name": "포블리",
         "email": "test2@test.com",
         "image": "uploadFiles/user_test02.webp"
       },
@@ -2344,7 +2640,7 @@
           "content": "와 진짜 센스 있으시네요! 특히 하트 와이어 아이디어 완전 귀여워요 💕 어디서 구매 하셨나요?? ",
           "user": {
             "_id": 2,
-            "name": "테스트 유저 1",
+            "name": "무야호",
             "email": "test1@test.com",
             "image": "uploadFiles/user_test01.webp"
           },
@@ -2354,11 +2650,61 @@
           "content": "그린메이트요!",
           "user": {
             "_id": 3,
-            "name": "테스트 유저 2",
+            "name": "포블리",
             "email": "test2@test.com",
             "image": "uploadFiles/user_test02.webp"
           },
           "_id": 2
+        },
+        {
+          "_id": 3,
+          "content": "와 센스 최고세요… 저도 곧 지인 생일인데 참고해도 될까요? 진짜 정성이 느껴져요!",
+          "user": {
+            "_id": 9,
+            "name": "초록별님",
+            "email": "test9@test.com",
+            "image": "uploadFiles/insam_brown.webp"
+          }
+        },
+        {
+          "_id": 4,
+          "content": "이런 포장 받은 친구분 너무 부럽네요🥺 식물 선물에 감성 포장까지 완벽해요.",
+          "user": {
+            "_id": 10,
+            "name": "마르멜로티",
+            "email": "test10@test.com",
+            "image": "uploadFiles/olive_tree_black.webp"
+          }
+        },
+        {
+          "_id": 5,
+          "content": "혹시 어떤 재료 사용하셨어요? 저도 따라해보고 싶어요! 포장 사진도 보고 싶네요!",
+          "user": {
+            "_id": 11,
+            "name": "꽃길걷는중",
+            "email": "test11@test.com",
+            "image": "uploadFiles/insam_gray.webp"
+          }
+        },
+        {
+          "_id": 6,
+          "content": "저도 친구한테 화분 선물해본 적 있는데 그냥 종이백에 넣었거든요😂 이 글 보니까 반성되네요 ㅎㅎ",
+          "user": {
+            "_id": 12,
+            "name": "무드식물러버",
+            "email": "test12@test.com",
+            "image": "uploadFiles/olive_tree_brown.webp"
+          }
+        },
+        {
+          "_id": 7,
+          "content": "식물도 좋지만 포장 하나로 감동이 배가 되죠! 마음까지 전해진 느낌이에요 🌿",
+          "user": {
+            "_id": 13,
+            "name": "모노그린",
+            "email": "test13@test.com",
+            "image": "uploadFiles/insam_black.webp"
+          }
         }
       ]
     },
@@ -2389,14 +2735,14 @@
         "nickname": "수박이",
         "species": "페페로미아"
       },
-      "bookmarks": 302,
+      "bookmarks": 0,
       "views": 1008,
       "user": {
         "_id": 2,
         "type": "user",
-        "name": "테스트 유저 1",
+        "name": "케로로빵",
         "email": "test@test.com",
-        "image": "uploadFiles/user_test01.webp"
+        "image": "uploadFiles/mini_money_tree_black.webp"
       },
       "seller_id": null,
       "replies": [
@@ -2404,9 +2750,9 @@
           "content": "설명으로 봐서는 흰가루병이나 회색곰팡이병 같네요. 당장 격리부터 하세요! 저희 집 페페로미아도 작년에 똑같았어요ㅠㅠ 습도 때문이었거든요. 가습기 끄고 선풍기로 바람 불어줬더니 나아졌어요. ",
           "user": {
             "_id": 2,
-            "name": "테스트 유저 1",
+            "name": "왕밤빵",
             "email": "test@test.com",
-            "image": "uploadFiles/user_test01.webp"
+            "image": "uploadFiles/mini_money_tree_gray.webp"
           },
           "_id": 1
         },
@@ -2414,11 +2760,61 @@
           "content": "네ㅠㅠ 답변 감사합니다~",
           "user": {
             "_id": 3,
-            "name": "테스트 유저 2",
+            "name": "케로로빵",
             "email": "test2@test.com",
-            "image": "uploadFiles/user_test02.webp"
+            "image": "uploadFiles/mini_money_tree_black.webp"
           },
           "_id": 2
+        },
+        {
+          "_id": 3,
+          "content": "혹시 통풍 잘 되는 곳에 두고 계신가요? 수박 페페는 공기 순환 안 되면 흰 곰팡이 생기기 쉬워요ㅠㅠ",
+          "user": {
+            "_id": 14,
+            "name": "흙속에저별도",
+            "email": "test14@test.com",
+            "image": "uploadFiles/olive_tree_gray.webp"
+          }
+        },
+        {
+          "_id": 4,
+          "content": "저도 비슷했는데 분무 자주 해줬더니 더 심해지더라고요! 물주기랑 습도 조절 해보세요.",
+          "user": {
+            "_id": 15,
+            "name": "에코살롱",
+            "email": "test15@test.com",
+            "image": "uploadFiles/insam_brown.webp"
+          }
+        },
+        {
+          "_id": 5,
+          "content": "혹시 잎 뒷면에도 퍼져 있나요? 그럼 진딧물이나 깍지벌레도 의심해보셔야 해요ㅠㅠ 확대해서 한 번 확인해보세요!",
+          "user": {
+            "_id": 16,
+            "name": "플랜테리어초보",
+            "email": "test16@test.com",
+            "image": "uploadFiles/insam_gray.webp"
+          }
+        },
+        {
+          "_id": 6,
+          "content": "저는 베이킹소다랑 물 섞어서 살짝 닦아줬더니 나아졌어요. 근데 꼭 해지기 전엔 잎 하나만 먼저 테스트 해보세요!",
+          "user": {
+            "_id": 17,
+            "name": "식물힐링러",
+            "email": "test17@test.com",
+            "image": "uploadFiles/olive_tree_brown.webp"
+          }
+        },
+        {
+          "_id": 7,
+          "content": "이거 진짜 방치하면 퍼져요ㅠ 저도 수박 페페 곰팡이로 한 번 고생했어서요… 통풍 + 햇빛 + 흙 상태 꼭 체크해보세요!",
+          "user": {
+            "_id": 18,
+            "name": "그린레이다",
+            "email": "test18@test.com",
+            "image": "uploadFiles/insam_black.webp"
+          }
         }
       ]
     },
@@ -2454,14 +2850,14 @@
         "nickname": "붉은 악마",
         "species": "안스리움"
       },
-      "bookmarks": 85,
+      "bookmarks": 0,
       "views": 500,
       "user": {
         "_id": 3,
         "type": "user",
-        "name": "테스트 유저 2",
+        "name": "주먹밥 쿵야",
         "email": "test2@test.com",
-        "image": "uploadFiles/user_test02.webp"
+        "image": "uploadFiles/coffee_plant_black.webp"
       },
       "seller_id": null,
       "replies": [
@@ -2469,9 +2865,9 @@
           "content": "와 대박이네요~ 꿀팁 감사합니다.",
           "user": {
             "_id": 2,
-            "name": "테스트 유저 1",
+            "name": "양파 쿵야",
             "email": "test@test.com",
-            "image": "uploadFiles/user_test01.webp"
+            "image": "uploadFiles/little_light_white.webp"
           },
           "_id": 1
         },
@@ -2479,30 +2875,86 @@
           "content": "넹 감사합니다~",
           "user": {
             "_id": 3,
-            "name": "테스트 유저 2",
+            "name": "주먹밥 쿵야",
             "email": "test2@test.com",
-            "image": "uploadFiles/user_test02.webp"
+            "image": "uploadFiles/coffee_plant_black.webp"
           },
           "_id": 2
+        },
+        {
+          "_id": 3,
+          "content": "와… 1년 내내 꽃이 핀다니 대단하세요! 물 주는 간격이랑 햇빛은 어떻게 관리하세요?",
+          "user": {
+            "_id": 19,
+            "name": "잎새달",
+            "email": "test19@test.com",
+            "image": "uploadFiles/olive_tree_black.webp"
+          }
+        },
+        {
+          "_id": 4,
+          "content": "안스리움 키우기 진짜 어렵던데… 희망이 생기네요! 노하우 공유 너무 감사합니다🥹",
+          "user": {
+            "_id": 20,
+            "name": "비건식물연구소",
+            "email": "test20@test.com",
+            "image": "uploadFiles/insam_brown.webp"
+          }
+        },
+        {
+          "_id": 5,
+          "content": "혹시 겨울철에 온도 어떻게 유지하시나요? 저희 집은 추워서 겨울에 늘 시들더라고요ㅠㅠ",
+          "user": {
+            "_id": 21,
+            "name": "초록행성주민",
+            "email": "test21@test.com",
+            "image": "uploadFiles/olive_tree_gray.webp"
+          }
+        },
+        {
+          "_id": 6,
+          "content": "안스리움 정말 예쁜데 키우기 까다로워서 포기할 뻔했어요… 3년차 집사님 존경합니다🙏",
+          "user": {
+            "_id": 22,
+            "name": "그린테이블",
+            "email": "test22@test.com",
+            "image": "uploadFiles/insam_gray.webp"
+          }
+        },
+        {
+          "_id": 7,
+          "content": "혹시 노하우 정리된 거 이미지나 링크로 볼 수 있을까요? 저장해두고 싶어요!",
+          "user": {
+            "_id": 23,
+            "name": "식물덕후보리",
+            "email": "test23@test.com",
+            "image": "uploadFiles/insam_black.webp"
+          }
         }
       ]
     }
   ],
-  "codes": [
+  "code": [
     {
-      "sort": 1,
-      "code": "OS010",
-      "value": "주문 완료"
-    },
-    {
-      "sort": 2,
-      "code": "OS035",
-      "value": "배송중"
-    },
-    {
-      "sort": 3,
-      "code": "OS040",
-      "value": "배송 완료"
+      "id": "deliveryStatus",
+      "title": "배송 상태 추적 코드",
+      "codes": [
+        {
+          "sort": 1,
+          "code": "OS010",
+          "value": "주문 완료"
+        },
+        {
+          "sort": 2,
+          "code": "OS035",
+          "value": "배송중"
+        },
+        {
+          "sort": 3,
+          "code": "OS040",
+          "value": "배송 완료"
+        }
+      ]
     }
   ],
   "config": []

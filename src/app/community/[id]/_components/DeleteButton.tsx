@@ -1,11 +1,5 @@
 'use client';
 
-import { deletePostById, fetchPostById } from '@/lib/functions/communityFunctions';
-import { useAuth } from '@/store/authStore';
-import { Trash2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,19 +14,26 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/AlertDialog';
 import { Button } from '@/components/ui/Button';
+import { deletePostById } from '@/lib/functions/communityFunctions';
+import { useAuth } from '@/store/authStore';
+import { Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 interface Props {
   postId: string;
+  authorId: string;
 }
 
-export default function DeleteButton({ postId }: Props) {
+export default function DeleteButton({ postId, authorId }: Props) {
   const router = useRouter();
-  const { isLoggedIn, zustandUser, session } = useAuth();
+  const { isLoggedIn, currentUser, session, zustandUser } = useAuth();
   const token = zustandUser?.token?.accessToken || session?.accessToken;
-  const currentUserId = zustandUser?._id || session?.id;
 
-  const [isAuthor, setIsAuthor] = useState(false);
-  const [loading, setLoading] = useState(true);
+  // id, _id 둘 다 커버!
+  const currentUserId = (currentUser && ('id' in currentUser ? currentUser.id : undefined)) ?? (currentUser && ('_id' in currentUser ? currentUser._id : undefined)) ?? '';
+  const isAuthor = String(currentUserId) === String(authorId);
+
   const [resultDialog, setResultDialog] = useState<{
     open: boolean;
     title: string;
@@ -40,50 +41,42 @@ export default function DeleteButton({ postId }: Props) {
     onConfirm: () => void;
   }>({ open: false, title: '', description: '', onConfirm: () => {} });
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const post = await fetchPostById(postId);
-        setIsAuthor(String(post.author.id) === String(currentUserId));
-      } catch (err) {
-        console.error('작성자 체크 실패', err);
-        setIsAuthor(false);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [postId, currentUserId]);
-
   const handleDelete = async () => {
+    if (!isLoggedIn || !token) {
+      setResultDialog({
+        open: true,
+        title: '인증이 필요합니다.',
+        onConfirm: () => setResultDialog((p) => ({ ...p, open: false })),
+      });
+      return;
+    }
     try {
-      if (!isLoggedIn || !token) throw new Error('인증이 필요합니다.');
-      await deletePostById(postId, token);
+      await deletePostById(postId, token!);
       setResultDialog({
         open: true,
         title: '게시글이 삭제되었습니다.',
         onConfirm: () => {
-          setResultDialog((prev) => ({ ...prev, open: false }));
+          setResultDialog((p) => ({ ...p, open: false }));
           router.push('/community');
         },
       });
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : String(err);
-      const isForbidden = [/403/, /forbidden/i, /리소스를 찾을 수 없습니다/].some((rx) => rx.test(message));
+      const errorMessage = err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.';
+      const isForbidden = [/403/, /forbidden/i].some((rx) => rx.test(errorMessage));
       setResultDialog({
         open: true,
         title: isForbidden ? '다른 사람의 게시물을 삭제할 수 없습니다.' : '삭제 중 오류가 발생했습니다.',
-        description: isForbidden ? undefined : message,
-        onConfirm: () => setResultDialog((prev) => ({ ...prev, open: false })),
+        description: isForbidden ? undefined : errorMessage,
+        onConfirm: () => setResultDialog((p) => ({ ...p, open: false })),
       });
     }
   };
 
   return (
     <>
-      {/* 삭제 확인 다이얼로그 */}
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button variant='destructive' size='sm' disabled={loading || !isLoggedIn || !token || !isAuthor} className='disabled:cursor-not-allowed'>
+          <Button variant='destructive' size='sm' disabled={!isAuthor} className='disabled:cursor-not-allowed'>
             <Trash2 size={12} className='mr-1' />
             삭제
           </Button>
@@ -103,8 +96,7 @@ export default function DeleteButton({ postId }: Props) {
         </AlertDialogPortal>
       </AlertDialog>
 
-      {/* 결과 다이얼로그 */}
-      <AlertDialog open={resultDialog.open} onOpenChange={(open) => setResultDialog((prev) => ({ ...prev, open }))}>
+      <AlertDialog open={resultDialog.open} onOpenChange={(open) => setResultDialog((p) => ({ ...p, open }))}>
         <AlertDialogPortal>
           <AlertDialogOverlay />
           <AlertDialogContent>

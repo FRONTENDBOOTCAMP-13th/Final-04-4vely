@@ -138,7 +138,7 @@ export default function ClientCommunity({ initialPosts, initialPagination }: Pro
                       <div className='absolute top-2 right-2 z-10' onClick={(e) => e.stopPropagation()}>
                         <BookmarkButton type='post' targetId={Number(post.id)} myBookmarkId={post.myBookmarkId ?? undefined} onBookmarkChange={(isBookmarked, bookmarkId) => handleBookmarkChange(post.id, isBookmarked, bookmarkId)} />
                       </div>
-                      <CardImage src={post.coverImage} alt={post.title} priority />
+                      <CardImage src={post.coverImage} alt={post.title} draggable={false} onDragStart={(e) => e.preventDefault()} />
                     </div>
 
                     {/* 2. 콘텐츠 */}

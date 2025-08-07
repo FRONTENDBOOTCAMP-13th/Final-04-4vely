@@ -51,7 +51,7 @@ export default function MagazineDetailContent({ post, myBookmarkId }: DetailCont
 
         {/* 하단 북마크 */}
         <div className='flex justify-end border-t-2 pt-6'>
-          <BookmarkButton targetId={post._id} type='post' myBookmarkId={myBookmarkId ?? undefined} revalidate={false} variant='text' />
+          <BookmarkButton targetId={post._id} postSubType='magazine' type='post' myBookmarkId={myBookmarkId ?? undefined} revalidate={false} variant='text' />
         </div>
       </main>
     </div>

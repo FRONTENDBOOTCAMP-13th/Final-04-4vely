@@ -36,6 +36,7 @@ interface BookmarkButtonProps {
   revalidate?: boolean;
   /** 북마크 종류 */
   variant?: 'icon' | 'text';
+  postSubType?: 'magazine' | 'community';
 }
 
 /**
@@ -58,7 +59,7 @@ interface BookmarkButtonProps {
  *   className="custom-class"
  * />
  */
-export default function BookmarkButton({ targetId: propTargetId, type = 'product', productId, myBookmarkId, revalidate = true, variant = 'icon', className = '', onBookmarkChange }: BookmarkButtonProps) {
+export default function BookmarkButton({ targetId: propTargetId, postSubType, type = 'product', productId, myBookmarkId, revalidate = true, variant = 'icon', className = '', onBookmarkChange }: BookmarkButtonProps) {
   // 모든 Hook을 최상위에서 호출 (조건문 이전)
   const [isPending, startTransition] = useTransition();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -117,7 +118,10 @@ export default function BookmarkButton({ targetId: propTargetId, type = 'product
     // 서버 액션 호출
     startTransition(async () => {
       try {
-        const result = await toggleBookmarkAction(targetId, type, { revalidate });
+        const result = await toggleBookmarkAction(targetId, type, {
+          revalidate,
+          postSubType,
+        });
 
         if (result.ok) {
           const action = result.item?.action;
