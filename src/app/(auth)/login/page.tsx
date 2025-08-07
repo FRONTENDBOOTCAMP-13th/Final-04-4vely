@@ -12,7 +12,7 @@ export default function LoginPage() {
         </h1>
         <p className='text-muted mb-10 flex items-center gap-2 md:text-lg'>
           당신의 반려 식물을 지금 만나보세요.
-          <Image className='h-8 w-4 md:h-10 md:w-5' src='/images/login_plant_character.webp' alt='식물 캐릭터' />
+          <Image className='h-8 w-4 md:h-10 md:w-5' width={20} height={40} src='/images/login_plant_character.webp' alt='식물 캐릭터' />
         </p>
 
         <LoginForm />

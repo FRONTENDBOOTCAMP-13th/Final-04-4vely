@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/Button';
 import PaginationWrapper from '@/components/ui/PaginationWrapper';
+import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
 import { updateOrderStatus } from '@/lib/actions/admin/orderActions';
 import { Order } from '@/types/order.types';
 import { ChevronDownIcon } from 'lucide-react';
@@ -104,10 +105,34 @@ export default function OrdersClient({ initialOrders, initialPagination, initial
     // 현재 상태를 한글로 표시
     const displayStatus = STATUS_MAP[currentStatus as keyof typeof STATUS_MAP] || currentStatus;
 
+    // 드롭다운 위치 계산
+    const getDropdownPosition = () => {
+      if (typeof window === 'undefined') return { top: '100%', bottom: 'auto' };
+
+      const button = document.querySelector(`[data-order-id="${orderId}"]`) as HTMLElement;
+      if (!button) return { top: '100%', bottom: 'auto' };
+
+      const rect = button.getBoundingClientRect();
+      const dropdownHeight = statusOptions.length * 40 + 8; // 대략적인 드롭다운 높이
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
+
+      // 아래쪽 공간이 충분하거나, 위쪽보다 아래쪽이 더 넓으면 아래로
+      if (spaceBelow >= dropdownHeight || spaceBelow >= spaceAbove) {
+        return { top: '100%', bottom: 'auto' };
+      } else {
+        // 위쪽에 공간이 더 많으면 위로
+        return { top: 'auto', bottom: '100%', marginBottom: '0.25rem' };
+      }
+    };
+
+    const dropdownPosition = isOpen ? getDropdownPosition() : { top: '100%', bottom: 'auto' };
+
     return (
-      <div className='relative' style={{ width }}>
+      <div className='relative' style={{ width, zIndex: isOpen ? 9999 : 'auto' }}>
         <button
           type='button'
+          data-order-id={orderId}
           onClick={() => setOpenDropdown(isOpen ? null : orderId)}
           className='focus:ring-black-500 flex w-full cursor-pointer items-center justify-between rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm hover:border-gray-400 focus:border-black focus:ring-1 focus:outline-none'
           style={{ width, height: size === 'sm' ? '2rem' : '2.25rem' }}
@@ -119,13 +144,25 @@ export default function OrdersClient({ initialOrders, initialPagination, initial
         {isOpen && (
           <>
             <div className='fixed inset-0 z-10' onClick={() => setOpenDropdown(null)} />
-            <div className='absolute z-20 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-lg'>
+            <div
+              className='absolute z-50 rounded-md border border-gray-200 bg-white shadow-lg'
+              style={{
+                width: width,
+                position: 'absolute',
+                top: dropdownPosition.top,
+                bottom: dropdownPosition.bottom,
+                left: 0,
+                zIndex: 9999,
+                marginTop: dropdownPosition.top === '100%' ? '0.25rem' : '0',
+                marginBottom: dropdownPosition.marginBottom || '0',
+              }}
+            >
               {statusOptions.map((option) => (
                 <button
                   type='button'
                   key={option.value}
                   onClick={() => handleStatusChange(orderId, option.value)}
-                  className='block w-full cursor-pointer px-3 py-2 text-left text-sm first:rounded-t-md last:rounded-b-md hover:bg-gray-50'
+                  className='block w-full cursor-pointer px-3 py-2 text-left text-sm first:rounded-t-md last:rounded-b-md'
                   style={{
                     transition: 'background-color 0.2s',
                   }}
@@ -187,7 +224,7 @@ export default function OrdersClient({ initialOrders, initialPagination, initial
           type='button'
           onClick={() => setIsOpen(!isOpen)}
           className='focus:ring-black-500 flex cursor-pointer items-center justify-between rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm hover:border-gray-400 focus:border-black focus:ring-1 focus:outline-none'
-          style={{ width: '7rem', height: '2.25rem' }}
+          style={{ width: '7rem', height: '2.25rem', cursor: 'pointer' }}
         >
           <div className='flex items-center gap-1'>
             <span>{currentOption.icon}</span>
@@ -208,7 +245,7 @@ export default function OrdersClient({ initialOrders, initialPagination, initial
                     handleSortChange(option.value);
                     setIsOpen(false);
                   }}
-                  className={`block w-full px-3 py-2 text-left text-sm first:rounded-t-md last:rounded-b-md hover:bg-gray-50 ${option.value === currentSortValue ? 'bg-gray-50 text-black' : ''}`}
+                  className={`block w-full cursor-pointer px-3 py-2 text-left text-sm first:rounded-t-md last:rounded-b-md hover:bg-gray-50 ${option.value === currentSortValue ? 'bg-gray-50 text-black' : ''}`}
                 >
                   <span className='mr-2'>{option.icon}</span>
                   {option.label}
@@ -222,36 +259,47 @@ export default function OrdersClient({ initialOrders, initialPagination, initial
   };
 
   return (
-    <>
+    <div className='w-full max-w-full'>
       {/* 상단 컴트롤 바 */}
-      <div className='mb-4 flex items-center justify-between'>
+      <div className='mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
         <h2 className='text-lg font-semibold text-gray-900'>주문 관리</h2>
-        <SortSelect />
+        <div className='flex justify-end sm:justify-start'>
+          <SortSelect />
+        </div>
       </div>
 
       {/* 주문 목록 */}
-      <div className='overflow-hidden rounded-lg border border-gray-200 bg-white'>
+      <div className='w-full max-w-full rounded-lg border border-gray-200 bg-white' style={{ overflow: 'visible' }}>
         {/* 모바일 레이아웃 */}
-        <div className='block min-[840px]:hidden'>
+        <div className='block md:hidden'>
           <div className='divide-y divide-gray-200'>
             {orders.map((order) => (
-              <div key={order._id} className='p-4'>
-                <div className='mb-3 flex items-start justify-between'>
-                  <div className='flex-1'>
-                    <p className='mb-1 text-sm font-medium text-gray-900'>
-                      {order.products[0]?.name || '상품명 없음'}
-                      {order.products.length > 1 && ` 외 ${order.products.length - 1}건`}
-                    </p>
-                    <p className='text-xs text-gray-500'>#{order._id}</p>
-                    <p className='text-xs text-gray-500'>{order.createdAt}</p>
-                    <p className='text-xs text-gray-500'>주문자: {order.address?.name || `사용자 ${order.user_id}`}</p>
+              <div key={order._id} className='p-3 sm:p-4'>
+                <div className='mb-3 space-y-2'>
+                  {/* 상품명과 금액 */}
+                  <div className='flex items-start justify-between gap-2'>
+                    <div className='min-w-0 flex-1'>
+                      <p className='line-clamp-2 text-sm font-medium break-words text-gray-900'>
+                        {order.products[0]?.name || '상품명 없음'}
+                        {order.products.length > 1 && ` 외 ${order.products.length - 1}건`}
+                      </p>
+                    </div>
+                    <div className='flex-shrink-0'>
+                      <p className='text-sm font-medium whitespace-nowrap text-gray-900'>{order.cost.total.toLocaleString()}원</p>
+                    </div>
                   </div>
-                  <div className='text-right'>
-                    <p className='mb-1 text-sm font-medium text-gray-900'>{order.cost.total.toLocaleString()}원</p>
+
+                  {/* 주문 정보 */}
+                  <div className='space-y-1'>
+                    <p className='text-xs break-all text-gray-500'>#{order._id}</p>
+                    <p className='text-xs text-gray-500'>{order.createdAt}</p>
+                    <p className='text-xs break-words text-gray-500'>주문자: {order.address?.name || `사용자 ${order.user_id}`}</p>
                   </div>
                 </div>
+
+                {/* 상태 선택 */}
                 <div className='flex items-center justify-between'>
-                  <span className='text-xs text-gray-600'>진행상태:</span>
+                  <span className='text-xs font-medium text-gray-600'>진행상태</span>
                   <StatusSelect orderId={order._id.toString()} currentStatus={order.state} size='sm' />
                 </div>
               </div>
@@ -260,45 +308,49 @@ export default function OrdersClient({ initialOrders, initialPagination, initial
         </div>
 
         {/* 데스크톱 테이블 */}
-        <div className='hidden overflow-x-auto min-[840px]:block'>
-          <table className='min-w-full divide-y divide-gray-200'>
-            <thead className='bg-gray-50'>
-              <tr>
-                <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>주문번호</th>
-                <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>상품명</th>
-                <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>주문일자</th>
-                <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>주문자</th>
-                <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>진행상태</th>
-                <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>주문금액</th>
-              </tr>
-            </thead>
-            <tbody className='divide-y divide-gray-200 bg-white'>
-              {orders.map((order) => (
-                <tr key={order._id} className='hover:bg-gray-50'>
-                  <td className='px-6 py-4 text-sm whitespace-nowrap text-gray-900'>{order._id}</td>
-                  <td className='px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900'>
-                    {order.products[0]?.name || '상품명 없음'}
-                    {order.products.length > 1 && ` 외 ${order.products.length - 1}건`}
-                  </td>
-                  <td className='px-6 py-4 text-sm whitespace-nowrap text-gray-900'>{order.createdAt}</td>
-                  <td className='px-6 py-4 text-sm whitespace-nowrap text-gray-900'>{order.address?.name || `사용자 ${order.user_id}`}</td>
-                  <td className='px-6 py-4 whitespace-nowrap'>
-                    <StatusSelect orderId={order._id.toString()} currentStatus={order.state} size='default' />
-                  </td>
-                  <td className='px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900'>{order.cost.total.toLocaleString()}원</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className='hidden md:block' style={{ overflow: 'visible' }}>
+          <div className='relative w-full' style={{ overflow: 'visible' }}>
+            <div className='overflow-x-auto' style={{ overflow: openDropdown ? 'visible' : 'auto' }}>
+              <table className='w-full min-w-[50rem] caption-bottom text-sm'>
+                <TableHeader className='bg-gray-50'>
+                  <TableRow className='hover:bg-gray-50'>
+                    <TableHead className='px-6 py-3 text-xs font-medium tracking-wider text-gray-500 uppercase'>주문번호</TableHead>
+                    <TableHead className='px-6 py-3 text-xs font-medium tracking-wider text-gray-500 uppercase'>상품명</TableHead>
+                    <TableHead className='px-6 py-3 text-xs font-medium tracking-wider text-gray-500 uppercase'>주문일자</TableHead>
+                    <TableHead className='px-6 py-3 text-xs font-medium tracking-wider text-gray-500 uppercase'>주문자</TableHead>
+                    <TableHead className='px-6 py-3 text-xs font-medium tracking-wider text-gray-500 uppercase'>진행상태</TableHead>
+                    <TableHead className='px-6 py-3 text-xs font-medium tracking-wider text-gray-500 uppercase'>주문금액</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody className='bg-white'>
+                  {orders.map((order) => (
+                    <TableRow key={order._id} className='hover:bg-gray-50'>
+                      <TableCell className='px-6 py-4 text-sm text-gray-900'>{order._id}</TableCell>
+                      <TableCell className='px-6 py-4 text-sm font-medium text-gray-900'>
+                        {order.products[0]?.name || '상품명 없음'}
+                        {order.products.length > 1 && ` 외 ${order.products.length - 1}건`}
+                      </TableCell>
+                      <TableCell className='px-6 py-4 text-sm text-gray-900'>{order.createdAt}</TableCell>
+                      <TableCell className='px-6 py-4 text-sm text-gray-900'>{order.address?.name || `사용자 ${order.user_id}`}</TableCell>
+                      <TableCell className='px-6 py-4'>
+                        <StatusSelect orderId={order._id.toString()} currentStatus={order.state} size='default' />
+                      </TableCell>
+                      <TableCell className='px-6 py-4 text-sm font-medium text-gray-900'>{order.cost.total.toLocaleString()}원</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </table>
+            </div>
+          </div>
         </div>
 
         {/* 페이지네이션 */}
         {initialPagination.totalPages > 1 && (
-          <div className='flex items-center justify-center border-t border-gray-200 bg-white px-3 py-3 min-[840px]:px-6'>
+          <div className='flex items-center justify-center border-t border-gray-200 bg-white p-3 sm:px-6 sm:py-4'>
             <PaginationWrapper currentPage={initialPagination.page} totalPages={initialPagination.totalPages} setCurrentPage={handlePageChange} />
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }

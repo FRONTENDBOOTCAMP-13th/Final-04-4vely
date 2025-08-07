@@ -119,11 +119,17 @@ export default function WeatherWidget() {
                       {tipsData.weather.tip
                         .split('.')
                         .filter((sentence) => sentence.trim() !== '')
-                        .map((sentence, index) => (
-                          <p key={index} className='mb-1'>
-                            {sentence.trim() + '.'}
-                          </p>
-                        ))}
+                        .map((sentence, index) => {
+                          const trimmed = sentence.trim();
+                          const lastChar = trimmed.charAt(trimmed.length - 1);
+                          const ending = ['.', '!', '?'].includes(lastChar) ? '' : '.';
+
+                          return (
+                            <p key={index} className='mb-1'>
+                              {trimmed + ending}
+                            </p>
+                          );
+                        })}
                     </div>
                   </div>
 
