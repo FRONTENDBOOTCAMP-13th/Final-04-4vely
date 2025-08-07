@@ -66,13 +66,15 @@
 | **Tools** | ![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white) ![Git](https://img.shields.io/badge/git-%23F05032.svg?style=for-the-badge&logo=git&logoColor=white) ![ESLint](https://img.shields.io/badge/ESLint-4B3263?style=for-the-badge&logo=eslint&logoColor=white) ![Prettier](https://img.shields.io/badge/prettier-1A2C34?style=for-the-badge&logo=prettier&logoColor=F7BA3E) |
 | **Deploy**      | ![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white)                                                                                                                                                                                                                                                                                                                               |
 
-<br /><br />
+<br />
 
 ## 🔄 유저 플로우
 
 <img width="648" height="781" alt="유저 플로우 차트" src="https://github.com/user-attachments/assets/31d0ae61-be11-4c3a-ba19-7f099be07592" />
 
-<br />
+
+<br /><br>
+
 
 ## ✨ 주요 기능 및 화면
 
